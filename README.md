@@ -1,44 +1,43 @@
-# P0 - Pair Programming eCommerce Project
+# P1 - Movie Application
 
 ## Introduction
 
-This is a Java-based command-line interface (CLI) eCommerce application. The application will be primarily built using Java and will utilize a PostgreSQL database to store product and user information.
+This is a full stack movie application that will use Angular on the frontend and Springboot with a Postgres database on the backend. An external api called TMBD will also be used to retrieve movie data.
 
 ## User Stories
 
-- **As a user**, I want to register an account so that I can have a personalized shopping experience.
-- **As a user**, I want to log in to my account so that I can access my shopping cart and order history.
-- **As a user**, I want to browse through products only when logging in.
-- **As a user**, I want to search for products by name, category, or price range so that I can find what I'm looking for.
-- **As a user**, I want to add products to my shopping cart so that I can purchase them later.
-- **As a user**, I want to modify the quantity or remove items from my cart so that I can make changes before finalizing the purchase.
-- **As a user**, I want to check out and pay for my order securely so that my personal and financial information is safe.
-- **As a user**, I want to review my order history so that I can keep track of my purchases.
-- **As a user**, I want to rate and review products so that I can share my experience with other users.
-- **As a user**, I want to view ratings and reviews from other users so that I can make informed buying decisions.
+- **As a user**, I want to register an account so that I can have a personalized experience
+- **As a user**, I want to log in to my account so that I can access my movie/show lists.
+- **As a user**, I want to browse through movies/shows only when logged in.
+- **As a user**, I want to search for movies/shows by name, category, or IMDb rating so that I can find the movie/show I am looking for.
+- **As a user**, I want to add movies/shows to my movie/show lists or bookmark movies/shows to plan on watching them later.
+- **As a user**, I want to modify the movies/shows in my movie/show lists by removing them or changing bookmark category.
+- **As a user**, I want to rate and review movies/shows so that I can share my experience with other users.
+- **As a user**, I want to view ratings and reviews from other users so that I can make a decision on which movies/shows to watch.
 
 
 ## MVP (Minimum Viable Product)
 
 - User registration and login
-- Browsing and searching for products
-- Adding products to a shopping cart
-- Modifying the shopping cart
-- Secure payment process
-- Order history
-- Product rating and reviewing
+- Browsing and searching for movies/shows
+- Adding movies/shows to movie/show lists or adding a bookmark category
+- Modifying the movie/show list and bookmarks
+- Movie/show rating and reviewing
 
 ## Stretch Goals
 
-- Implementing a recommendation system based on user's previous purchases
-- Adding an admin role that can add, remove, or modify products
-- Implementing promotional codes and discounts
-- Adding a wish list feature
+- Implementing a recommendation system based on user's previous watched movies/shows or favorite movies/shows
+- Implementing a streaming service recomendation system that give users the cheapest services to watch a list of movies/shows
+- Implementing a community polling system
 
 ## Tech Stacks
 
-- **Java**: The main programming language used for building the application.
-- **PostgreSQL**: Used as the database to store user, product, and order data.
+- **Java**: The backend programming language used for building the application.
+- **Typescript**: A strongly typed programming language that is a superset of Javascript used in the Angular framework.
+- **Tailwind**: A CSS framwork used to style the the client side application.
+- **PostgreSQL**: Used as the database to store user, movie/show lists, and bookmarks.
+- **Springboot**: A backend framework used to build application's REST API.
+- **Angular**: Frontend framework used to build the client side application.
 - **Maven or Gradle**: Used for managing project dependencies.
 - **JUnit**: A testing framework for Java applications, used to ensure our code works as expected.
 - **Log4j**: A logging utility for debugging purposes.
