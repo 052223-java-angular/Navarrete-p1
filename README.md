@@ -38,9 +38,9 @@ This is a full stack movie application that will use Angular on the frontend and
 - **PostgreSQL**: Used as the database to store user, movie/show lists, and bookmarks.
 - **Springboot**: A backend framework used to build application's REST API.
 - **Angular**: Frontend framework used to build the client side application.
+- **Lombok**: To reduce boilerplate code;
 - **Maven or Gradle**: Used for managing project dependencies.
 - **JUnit**: A testing framework for Java applications, used to ensure our code works as expected.
-- **Log4j**: A logging utility for debugging purposes.
 - **JDBC (Java Database Connectivity)**: An API for connecting and executing queries on the database.
 - **BCrypt**: A Java library for hashing and checking passwords for security.
 - **JUnit, Mockito, and PowerMock**: Used for unit and integration testing.
@@ -63,4 +63,3 @@ This is a full stack movie application that will use Angular on the frontend and
 - **Documentation**: The repository should include a README file with clear instructions on how to run the application. Code should be well-commented to allow for easy understanding and maintenance.
 
 - **Scalable**: The design of the application should be scalable, allowing for easy addition of new features or modifications in the future.
-
