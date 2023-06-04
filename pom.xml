@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.revature</groupId>
-	<artifactId>matvs</artifactId>
+	<artifactId>movietn</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>matvs</name>
-	<description>Movies and tv shows</description>
+	<name>movietn</name>
+	<description>Everything movies</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
