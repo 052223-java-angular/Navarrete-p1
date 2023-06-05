@@ -9,9 +9,11 @@ This is a full stack movie application that will use Angular on the frontend and
 - **As a user**, I want to register an account so that I can have a personalized experience
 - **As a user**, I want to log in to my account so that I can access my movie lists.
 - **As a user**, I want to browse through movies only when logged in.
-- **As a user**, I want to search for movies by name, category, or IMDb rating so that I can find the movie I am looking for.
-- **As a user**, I want to add movies to my movie lists or bookmark movies to plan on watching them later.
-- **As a user**, I want to modify the movies in my movie lists by removing them or changing bookmark category.
+- **As a user**, I want to search for movies by name, category, or rating range so that I can find the movie I am looking for.
+- **As a user**, I want to be able to create movie lists so I can group together my movies.
+- **As a user**, I want to add movies to my movie lists so I can keep track of movies or group them together by a certain topic.
+- **As a user**, I want to modify the movies in my movie lists by removing them.
+- **As a user**, I want to modify my movies lists by deleting them.
 - **As a user**, I want to rate and review movies so that I can share my experience with other users.
 - **As a user**, I want to view ratings and reviews from other users so that I can make a decision on which movies to watch.
 
@@ -19,9 +21,11 @@ This is a full stack movie application that will use Angular on the frontend and
 ## MVP (Minimum Viable Product)
 
 - User registration and login
+- User roles for authentication
 - Browsing and searching for movies
-- Adding movies to movie lists or adding a bookmark category
-- Modifying the movie list and bookmarks
+- Search for movies using a filter
+- Adding movies to movie lists
+- Modifying the movie lists and movies in a movie list
 - movie rating and reviewing
 
 ## Stretch Goals
