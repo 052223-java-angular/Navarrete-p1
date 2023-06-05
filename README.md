@@ -63,3 +63,8 @@ This is a full stack movie application that will use Angular on the frontend and
 - **Documentation**: The repository should include a README file with clear instructions on how to run the application. Code should be well-commented to allow for easy understanding and maintenance.
 
 - **Scalable**: The design of the application should be scalable, allowing for easy addition of new features or modifications in the future.
+
+
+# ERD
+
+![entity relationship diagram](src/main/resources/db/p1-erd.png?raw=true)
