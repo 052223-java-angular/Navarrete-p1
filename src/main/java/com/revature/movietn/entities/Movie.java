@@ -1,7 +1,6 @@
 package com.revature.movietn.entities;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -48,7 +47,5 @@ public class Movie {
         this.id = UUID.randomUUID().toString();
         this.totalRating = totalRating;
         this.totalVotes = totalVotes;
-        this.reviews = new HashSet<>();
-        this.movieLists = new HashSet<>();
     }
 }

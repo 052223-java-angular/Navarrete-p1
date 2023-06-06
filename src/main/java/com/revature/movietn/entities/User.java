@@ -1,6 +1,5 @@
 package com.revature.movietn.entities;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,13 +52,15 @@ public class User {
     @JsonManagedReference
     private Set<MovieList> movieLists;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Profile profile;
+
     public User(String username, String email, String password, Role role) {
         this.id = UUID.randomUUID().toString();
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.reviews = new HashSet<>();
-        this.movieLists = new HashSet<>();
     }
 }

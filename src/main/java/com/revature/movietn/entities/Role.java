@@ -1,6 +1,5 @@
 package com.revature.movietn.entities;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,6 +36,5 @@ public class Role {
     public Role(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.users = new HashSet<>();
     }
 }
