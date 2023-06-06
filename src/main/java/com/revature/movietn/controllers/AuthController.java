@@ -11,6 +11,7 @@ import com.revature.movietn.dtos.requests.NewUserRequest;
 import com.revature.movietn.services.UserService;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -20,7 +21,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody NewUserRequest req) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody NewUserRequest req) {
         // check if username is valid
         if (!userService.isValidUsername(req.getUsername())) {
             throw new ResourceConflictException(

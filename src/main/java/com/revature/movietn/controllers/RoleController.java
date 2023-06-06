@@ -11,6 +11,7 @@ import com.revature.movietn.dtos.requests.NewRoleRequest;
 import com.revature.movietn.services.RoleService;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -27,7 +28,7 @@ public class RoleController {
      *         failure to create a new role
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createRole(@RequestBody NewRoleRequest req) {
+    public ResponseEntity<?> createRole(@Valid @RequestBody NewRoleRequest req) {
         // check if role exists
         if (!roleService.isUniqueRole(req.getName())) {
             throw new ResourceConflictException("Role " + req.getName() + " already exists");
