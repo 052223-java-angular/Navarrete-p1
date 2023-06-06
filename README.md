@@ -2,7 +2,11 @@
 
 ## Introduction
 
-This is a full stack movie application that will use Angular on the frontend and Springboot with a Postgres database on the backend. An external api called TMBD will also be used to retrieve movie data.
+This is a full stack movie application that will use Angular on the frontend and Springboot with a Postgres database on the backend. An external api called TMBD will be used to retrieve all the movie data from the frontend to display. 
+
+When a user reaches the home page they must register an account or login to an existing account. Once they do so they are redirected to a page that allows them to browse the most poopular movies, search for specific movies, or find movies by using a filter. Once a movie is found a user can click on the movie card and get redirected to a page that shows more information for the movie. While browsing for movies or when looking at a movie's details a user has the option to add the movie to one of their movie lists. In the navbar an option called movie lists will redirect the user to their movie lists. There a user can create new movie lists or modify their movie lists by removing movies or deleting the movie list. In the movie list the user can also request movie recommendations based off of the movies in their list. In the future I plan to implement a community polling sytem to allow users to vote from a set of movies during a set period of time. At the end of the allotted time a winner is chosen for that poll. I also want to implement a streaming service recommendation system to give a user a list of streaming service options to watch all the movies in a list in the cheapest way possible.
+
+On the backend of the application Springboot is used to create an abstraction of many process such as database connectivity, creation of a local server, crud operations, and the managing of object and their dependencies. Using annotations provided by Springboot the developement process for this backend application is faster and simpler.
 
 ## User Stories
 
@@ -16,6 +20,7 @@ This is a full stack movie application that will use Angular on the frontend and
 - **As a user**, I want to modify my movies lists by deleting them.
 - **As a user**, I want to rate and review movies so that I can share my experience with other users.
 - **As a user**, I want to view ratings and reviews from other users so that I can make a decision on which movies to watch.
+- **As a user**, I want to recive movie recommendations based on my movie lists.
 
 
 ## MVP (Minimum Viable Product)
@@ -26,11 +31,11 @@ This is a full stack movie application that will use Angular on the frontend and
 - Search for movies using a filter
 - Adding movies to movie lists
 - Modifying the movie lists and movies in a movie list
-- movie rating and reviewing
+- Movie rating and reviewing
+- Recommendations based on movies in user's movie list
 
 ## Stretch Goals
 
-- Implementing a recommendation system based on user's previous watched movies or favorite movies
 - Implementing a streaming service recomendation system that give users the cheapest services to watch a list of movies
 - Implementing a community polling system
 
