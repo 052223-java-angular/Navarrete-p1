@@ -47,6 +47,5 @@ public class MovieList {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.user = user;
-        this.movies = new HashSet<>();
     }
 }

@@ -48,7 +48,5 @@ public class Movie {
         this.id = UUID.randomUUID().toString();
         this.totalRating = totalRating;
         this.totalVotes = totalVotes;
-        this.reviews = new HashSet<>();
-        this.movieLists = new HashSet<>();
     }
 }

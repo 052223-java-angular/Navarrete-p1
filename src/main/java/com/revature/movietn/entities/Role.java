@@ -37,6 +37,5 @@ public class Role {
     public Role(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.users = new HashSet<>();
     }
 }
