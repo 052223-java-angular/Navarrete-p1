@@ -32,6 +32,11 @@ public class AuthController {
             throw new ResourceConflictException("Username " + req.getUsername() + " already exists.");
         }
 
+        // check if email is valid
+        if (!userService.isValidEmail(req.getEmail())) {
+            throw new ResourceConflictException("Email " + req.getEmail() + " invalid.");
+        }
+
         // check if password is valid
         if (!userService.isValidPassword(req.getPassword())) {
             throw new ResourceConflictException(
@@ -44,7 +49,7 @@ public class AuthController {
         }
 
         // register user
-        userService.register(req.getUsername(), req.getPassword());
+        userService.register(req.getUsername(), req.getEmail(), req.getPassword());
 
         // return 201 - CREATED
         return ResponseEntity.status(HttpStatus.CREATED).build();

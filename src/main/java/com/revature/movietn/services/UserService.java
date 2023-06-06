@@ -24,7 +24,7 @@ public class UserService {
      * @param password the user's password
      * @return the new registers User object
      */
-    public User register(String username, String password) {
+    public User register(String username, String email, String password) {
         // find role
         Role role = roleService.findByName("USER");
 
@@ -32,7 +32,7 @@ public class UserService {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         // create new user
-        User user = new User(username, hashedPassword, role);
+        User user = new User(username, email, hashedPassword, role);
 
         // save user
         return userRepository.save(user);
@@ -65,6 +65,16 @@ public class UserService {
         }
 
         return false;
+    }
+
+    /**
+     * Checks if email address is valid.
+     * 
+     * @param email the email to validate
+     * @return true if email is valid, false otherwise.
+     */
+    public boolean isValidEmail(String email) {
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
     }
 
     /**

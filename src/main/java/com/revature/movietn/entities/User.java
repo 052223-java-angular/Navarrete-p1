@@ -34,6 +34,9 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
     private String password;
 
     @ManyToOne
@@ -49,9 +52,10 @@ public class User {
     @JsonManagedReference
     private Set<MovieList> movieLists;
 
-    public User(String username, String password, Role role) {
+    public User(String username, String email, String password, Role role) {
         this.id = UUID.randomUUID().toString();
         this.username = username;
+        this.email = email;
         this.password = password;
         this.role = role;
         this.reviews = new HashSet<>();
