@@ -1,7 +1,6 @@
 package com.revature.movietn.entities;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
