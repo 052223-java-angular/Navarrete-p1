@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.NewRoleRequest;
 import com.revature.movietn.services.RoleService;
+import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
@@ -29,7 +30,7 @@ public class RoleController {
     public ResponseEntity<?> createRole(@RequestBody NewRoleRequest req) {
         // check if role exists
         if (!roleService.isUniqueRole(req.getName())) {
-            // TODO: throw exception
+            throw new ResourceConflictException("Role " + req.getName() + " already exists");
         }
 
         // save role

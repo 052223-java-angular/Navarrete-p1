@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.NewUserRequest;
 import com.revature.movietn.services.UserService;
+import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
 import lombok.AllArgsConstructor;
 
@@ -22,22 +23,24 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody NewUserRequest req) {
         // check if username is valid
         if (!userService.isValidUsername(req.getUsername())) {
-            // throw exception
+            throw new ResourceConflictException(
+                    "Username needs to be 8-20 characters long and can only contain letters, numbers, periods, and underscores. No periods or underscores at the start or end. Cannot have pairs of underscores / periods.");
         }
 
         // check if username is unique
         if (!userService.isUniqueUsername(req.getUsername())) {
-            // throw exception
+            throw new ResourceConflictException("Username " + req.getUsername() + " already exists.");
         }
 
         // check if password is valid
         if (!userService.isValidPassword(req.getPassword())) {
-            // throw exception
+            throw new ResourceConflictException(
+                    "Password must be at least 8 characters long and need to contain at least one number, undercase letter, and uppercase letter and one of the following symbols [@#$%^&+=]. Must not contain any whitespaces.");
         }
 
         // check if passwords match
         if (!userService.isSamePassword(req.getPassword(), req.getConfirmPassword())) {
-            // throw exception
+            throw new ResourceConflictException("Passwords do not match.");
         }
 
         // register user
