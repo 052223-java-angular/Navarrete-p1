@@ -37,8 +37,8 @@ public class ExceptionController {
     public ResponseEntity<Map<String, Object>> methodArgumentNotValidExceptionHandler(
             MethodArgumentNotValidException e) {
         Map<String, Object> resBody = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach((fe) -> {
-            String fieldName = ((FieldError) fe).getField();
+        e.getBindingResult().getFieldErrors().forEach((fe) -> {
+            String fieldName = fe.getField();
             String errorMessage = fe.getDefaultMessage();
             resBody.put(fieldName, errorMessage);
         });
