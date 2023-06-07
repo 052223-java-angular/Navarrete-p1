@@ -1,6 +1,7 @@
 package com.revature.movietn.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,15 +70,16 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    // @PostMapping("/login")
-    // public ResponseEntity<Principal> loginUser(@Valid @RequestBody
-    // LoginUserRequest req) {
-    // // login user
+    @PostMapping("/login")
+    public ResponseEntity<Principal> loginUser(@Valid @RequestBody LoginUserRequest req) {
+        // login user
+        Principal principal = userService.login(req.getUsername(), req.getPassword());
 
-    // // create jwt token
+        // create jwt token
 
-    // // create principal
+        // set token in principal
 
-    // // response
-    // }
+        // response
+        return ResponseEntity.status(HttpStatus.OK).body(principal);
+    }
 }
