@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.revature.movietn.utils.custom_exceptions.InvalidCredentialsException;
+import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -57,7 +57,7 @@ public class ExceptionController {
      *         a body with the timestamp and exception message.
      */
     @ExceptionHandler
-    public ResponseEntity<Map<String, Object>> invalidCredentialsExceptionHandler(InvalidCredentialsException e) {
+    public ResponseEntity<Map<String, Object>> unauthorizedAccessExceptionHandler(UnauthorizedAccessException e) {
         Map<String, Object> resBody = new HashMap<>();
         resBody.put("timestamp", new Date(System.currentTimeMillis()));
         resBody.put("message", e.getMessage());

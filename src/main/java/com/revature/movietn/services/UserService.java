@@ -9,7 +9,7 @@ import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.entities.Role;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.UserRepository;
-import com.revature.movietn.utils.custom_exceptions.InvalidCredentialsException;
+import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
 
 import lombok.AllArgsConstructor;
 
@@ -56,7 +56,7 @@ public class UserService {
             }
         }
 
-        throw new InvalidCredentialsException("Invalid username or password.");
+        throw new UnauthorizedAccessException("Invalid username or password.");
     }
 
     /**

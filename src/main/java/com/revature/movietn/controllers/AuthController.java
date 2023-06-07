@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.movietn.dtos.requests.LoginUserRequest;
 import com.revature.movietn.dtos.requests.NewUserRequest;
 import com.revature.movietn.dtos.responses.Principal;
+import com.revature.movietn.services.JwtTokenService;
 import com.revature.movietn.services.UserService;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
@@ -21,6 +22,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
+    private final JwtTokenService jwtTokenService;
 
     /**
      * Register API endpoint that handles registration of a user. Prior to saving a
@@ -82,8 +84,10 @@ public class AuthController {
         Principal principal = userService.login(req.getUsername(), req.getPassword());
 
         // create jwt token
+        String token = jwtTokenService.generateToken(principal);
 
         // set token in principal
+        principal.setToken(token);
 
         // response
         return ResponseEntity.status(HttpStatus.OK).body(principal);

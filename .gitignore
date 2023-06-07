@@ -6,6 +6,7 @@ HELP.md
 
 # Log file
 *.log
+*.log.**.gz
 
 # BlueJ files
 *.ctxt
@@ -83,3 +84,4 @@ build/
 
 # App properties
 **/application.properties
+**/META-INF/
