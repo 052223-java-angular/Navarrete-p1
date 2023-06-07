@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.revature.movietn.entities.Role;
 import com.revature.movietn.repositories.RoleRepository;
-import com.revature.movietn.utils.custom_exceptions.RoleNotFoundException;
+import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -40,10 +40,16 @@ public class RoleService {
         return false;
     }
 
+    /**
+     * Finds the role by using the role name.
+     * 
+     * @param name the role name
+     * @return the role if found
+     */
     public Role findByName(String name) {
         Optional<Role> foundRole = roleRepository.findByName(name);
         if (foundRole.isEmpty()) {
-            throw new RoleNotFoundException("Role " + name + " not found.");
+            throw new ResourceNotFoundException("Role " + name + " not found.");
         }
         return foundRole.get();
     }
