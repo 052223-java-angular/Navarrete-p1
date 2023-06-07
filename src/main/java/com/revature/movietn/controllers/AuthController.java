@@ -1,7 +1,6 @@
 package com.revature.movietn.controllers;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +24,9 @@ public class AuthController {
 
     /**
      * Register API endpoint that handles registration of a user. Prior to saving a
-     * user
-     * to the database validations are made against username, email, password, and
-     * confirm password. Username is also checked agains the database to ensure that
-     * a
-     * duplicate user record is not created.
+     * user to the database validations are made against username, email, password,
+     * and confirm password. Username is also checked agains the database to ensure
+     * that a duplicate user record is not created.
      * 
      * @param req the NewUserRequest object mapped from the request body
      * @return the ResponseEntity object with a status set to success or failure
@@ -70,6 +67,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * Login API endpoint that handles user login. Once a user is validated
+     * successfully through the login method in the service layer a jwt token
+     * is created and set to the token field in the principal. This principal
+     * is sent back in the response.
+     * 
+     * @param req the LoginUserRequest object mapped from the request body
+     * @return the ResponseEntity object with a status set to success or failure
+     */
     @PostMapping("/login")
     public ResponseEntity<Principal> loginUser(@Valid @RequestBody LoginUserRequest req) {
         // login user
