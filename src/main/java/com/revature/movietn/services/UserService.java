@@ -5,9 +5,11 @@ import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.entities.Role;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.UserRepository;
+import com.revature.movietn.utils.custom_exceptions.InvalidCredentialsException;
 
 import lombok.AllArgsConstructor;
 
@@ -24,7 +26,7 @@ public class UserService {
      * @param password the user's password
      * @return the new registers User object
      */
-    public User register(String username, String email, String password) {
+    public Principal register(String username, String email, String password) {
         // find role
         Role role = roleService.findByName("USER");
 
@@ -35,7 +37,26 @@ public class UserService {
         User user = new User(username, email, hashedPassword, role);
 
         // save user
-        return userRepository.save(user);
+        return new Principal(userRepository.save(user));
+    }
+
+    /**
+     * Validates user credentials and once everything checks the Principal DTO
+     * is returned.
+     * 
+     * @param username the user's username
+     * @param password the user's password
+     * @return the Prinical DTO object
+     */
+    public Principal login(String username, String password) {
+        Optional<User> foundUser = userRepository.findByUsername(username);
+        if (foundUser.isPresent()) {
+            if (BCrypt.checkpw(password, foundUser.get().getPassword())) {
+                return new Principal(foundUser.get());
+            }
+        }
+
+        throw new InvalidCredentialsException("Invalid username or password.");
     }
 
     /**

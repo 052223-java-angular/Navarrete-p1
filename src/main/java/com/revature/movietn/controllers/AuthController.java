@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.movietn.dtos.requests.LoginUserRequest;
 import com.revature.movietn.dtos.requests.NewUserRequest;
+import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.services.UserService;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
@@ -20,6 +22,15 @@ import lombok.AllArgsConstructor;
 public class AuthController {
     private final UserService userService;
 
+    /**
+     * Register API endpoint that handles registration of a user. Prior to saving a
+     * user to the database validations are made against username, email, password,
+     * and confirm password. Username is also checked agains the database to ensure
+     * that a duplicate user record is not created.
+     * 
+     * @param req the NewUserRequest object mapped from the request body
+     * @return the ResponseEntity object with a status set to success or failure
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody NewUserRequest req) {
         // check if username is valid
@@ -54,5 +65,27 @@ public class AuthController {
 
         // return 201 - CREATED
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * Login API endpoint that handles user login. Once a user is validated
+     * successfully through the login method in the service layer a jwt token
+     * is created and set to the token field in the principal. This principal
+     * is sent back in the response.
+     * 
+     * @param req the LoginUserRequest object mapped from the request body
+     * @return the ResponseEntity object with a status set to success or failure
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Principal> loginUser(@Valid @RequestBody LoginUserRequest req) {
+        // login user
+        Principal principal = userService.login(req.getUsername(), req.getPassword());
+
+        // create jwt token
+
+        // set token in principal
+
+        // response
+        return ResponseEntity.status(HttpStatus.OK).body(principal);
     }
 }
