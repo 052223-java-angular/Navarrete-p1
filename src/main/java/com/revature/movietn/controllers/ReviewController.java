@@ -8,12 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.GetAllReviewsRequest;
-import com.revature.movietn.dtos.requests.ReviewRequest;
+import com.revature.movietn.dtos.requests.NewReviewRequest;
 import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.dtos.responses.ReviewResponse;
 import com.revature.movietn.entities.Movie;
@@ -50,7 +51,8 @@ public class ReviewController {
      *         body containing the ReviewResponse object
      */
     @PostMapping
-    public ResponseEntity<ReviewResponse> createReview(@Valid @RequestBody ReviewRequest req, HttpServletRequest sreq) {
+    public ResponseEntity<ReviewResponse> createReview(@Valid @RequestBody NewReviewRequest req,
+            HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
 
@@ -110,5 +112,20 @@ public class ReviewController {
 
         // respond 201 - OK
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseSet);
+    }
+
+    @PutMapping
+    public ResponseEntity<ReviewResponse> updateReview(@Valid @RequestBody NewReviewRequest req,
+            HttpServletRequest sreq) {
+        // get token
+        String token = sreq.getHeader("auth_token");
+
+        // get user by username
+        User foundUser = userService.findByUsername(req.getUsername());
+
+        // validate token
+        jwtTokenService.validateToken(token, new Principal(foundUser));
+
+        return null;
     }
 }
