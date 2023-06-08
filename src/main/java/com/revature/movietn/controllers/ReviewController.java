@@ -1,7 +1,6 @@
 package com.revature.movietn.controllers;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -34,7 +33,18 @@ public class ReviewController {
     private final MovieService movieService;
     private final JwtTokenService jwtTokenService;
 
-    @PostMapping("/create")
+    /**
+     * Review endpoint that handles requests to create a review. To create a review
+     * the user must exist and must have a valid token. The user must also not have
+     * a review already in the db for the same movie. If all these validations check
+     * out then a review is created and the movie total votes and total rating are
+     * updated.
+     * 
+     * @param req  the RevewRequest object mapped from request body
+     * @param sreq the HttpServletRequest object
+     * @return the ResponseEntity object with a status set to success or failure
+     */
+    @PostMapping("/")
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewRequest req, HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");

@@ -16,6 +16,13 @@ import lombok.AllArgsConstructor;
 public class MovieService {
     private final MovieRepository movieRepository;
 
+    /**
+     * Finds a movie in the db by movie id.
+     * 
+     * @param id the movie id
+     * @return an Optional object containing the found Movie Object or an empty
+     *         Optional object
+     */
     public Optional<Movie> findById(String id) {
         Optional<Movie> foundMovie = movieRepository.findById(id);
         if (foundMovie.isEmpty()) {
@@ -24,6 +31,13 @@ public class MovieService {
         return foundMovie;
     }
 
+    /**
+     * Update movie in the db with the new total votes and new total rating
+     * 
+     * @param movie  the Movie object to be updated
+     * @param rating the new rating recieve from a new review
+     * @return the updated Movie object with updated information
+     */
     public Movie updateMovie(Movie movie, BigDecimal rating) {
         // update total rating and total votes
         movie.setTotalRating(
