@@ -1,6 +1,7 @@
 package com.revature.movietn.services;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.Review;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.ReviewRepository;
+import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -47,5 +49,20 @@ public class ReviewService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Finds all reviews for a movie using the movie id.
+     * 
+     * @param movieId the movie id
+     * @return a List of Review objects if reviews were found, otherwise throws a
+     *         ResourceNotFoundException
+     */
+    public List<Review> findAllByMovieId(String movieId) {
+        List<Review> foundReviews = reviewRepository.findAllByMovieId(movieId);
+        if (foundReviews.isEmpty()) {
+            throw new ResourceNotFoundException("No reviews for this movie.");
+        }
+        return reviewRepository.findAllByMovieId(movieId);
     }
 }
