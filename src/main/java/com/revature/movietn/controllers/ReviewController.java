@@ -80,8 +80,9 @@ public class ReviewController {
         Movie updatedMovie = movieService.updateMovie(foundMovie.get(), req.getRating());
 
         // save review
-        ReviewResponse reviewResponse = reviewService.saveReview(req.getRating(), req.getDescription(), foundUser,
-                updatedMovie);
+        ReviewResponse reviewResponse = reviewService
+                .saveReview(new Review(req.getRating(), req.getDescription(), foundUser,
+                        updatedMovie));
 
         // respond 201 - OK
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponse);

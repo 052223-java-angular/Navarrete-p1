@@ -1,6 +1,5 @@
 package com.revature.movietn.services;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -8,9 +7,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.revature.movietn.dtos.responses.ReviewResponse;
-import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.Review;
-import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.ReviewRepository;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -24,17 +21,12 @@ public class ReviewService {
     /**
      * Saves a review to the db.
      * 
-     * @param rating      the review rating
-     * @param description the review description
-     * @param user        the User object containing information of the user that
-     *                    requested the review creation
-     * @param movie       the Movie object containing information of the movie being
-     *                    reviewed
+     * @param review the Review object
      * @return the ReviewResponse object
      */
-    public ReviewResponse saveReview(BigDecimal rating, String description, User user, Movie movie) {
+    public ReviewResponse saveReview(Review review) {
         // save review
-        return new ReviewResponse(reviewRepository.save(new Review(rating, description, user, movie)));
+        return new ReviewResponse(reviewRepository.save(review));
     }
 
     /**
