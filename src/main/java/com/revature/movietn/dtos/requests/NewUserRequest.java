@@ -1,6 +1,6 @@
 package com.revature.movietn.dtos.requests;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,12 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NewUserRequest {
-    @NotNull(message = "Username should not be empty")
+    @NotBlank(message = "Username should not be empty")
     private String username;
-    @NotNull(message = "Email should not be empty")
+    @NotBlank(message = "Email should not be empty")
     private String email;
-    @NotNull(message = "Password should not be empty")
+    @NotBlank(message = "Password should not be empty")
     private String password;
-    @NotNull(message = "Confirm password should not be empty")
+    @NotBlank(message = "Confirm password should not be empty")
     private String confirmPassword;
 }
