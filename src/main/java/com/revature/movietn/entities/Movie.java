@@ -43,8 +43,8 @@ public class Movie {
     @JsonIgnoreProperties(value = "movies")
     private Set<MovieList> movieLists;
 
-    public Movie(BigDecimal totalRating, int totalVotes) {
-        this.id = UUID.randomUUID().toString();
+    public Movie(String id, BigDecimal totalRating, int totalVotes) {
+        this.id = id;
         this.totalRating = totalRating;
         this.totalVotes = totalVotes;
     }

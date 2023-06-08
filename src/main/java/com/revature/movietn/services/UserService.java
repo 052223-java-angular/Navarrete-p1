@@ -9,6 +9,7 @@ import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.entities.Role;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.UserRepository;
+import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,15 @@ import lombok.AllArgsConstructor;
 public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
+
+    public User findByUsername(String username) {
+        Optional<User> foundUser = userRepository.findByUsername(username);
+        if (foundUser.isPresent()) {
+            return foundUser.get();
+        }
+
+        throw new ResourceNotFoundException("User not found.");
+    }
 
     /**
      * Creates a new user with the given username and password credentials.
