@@ -10,9 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class LoginUserRequest {
-    @NotBlank(message = "Username should not be empty")
+public class GetAllReviewsRequest {
+    @NotBlank(message = "Username must not be empty.")
     private String username;
-    @NotBlank(message = "Password should not be empty")
-    private String password;
+    @NotBlank(message = "MovieId must not be empty.")
+    private String movieId;
 }

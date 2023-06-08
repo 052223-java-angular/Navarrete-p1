@@ -2,7 +2,6 @@ package com.revature.movietn.entities;
 
 import java.math.BigDecimal;
 import java.util.Set;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -43,8 +42,8 @@ public class Movie {
     @JsonIgnoreProperties(value = "movies")
     private Set<MovieList> movieLists;
 
-    public Movie(BigDecimal totalRating, int totalVotes) {
-        this.id = UUID.randomUUID().toString();
+    public Movie(String id, BigDecimal totalRating, int totalVotes) {
+        this.id = id;
         this.totalRating = totalRating;
         this.totalVotes = totalVotes;
     }

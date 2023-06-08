@@ -1,5 +1,6 @@
 package com.revature.movietn.entities;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -26,7 +27,7 @@ public class Review {
     private String id;
 
     @Column(nullable = false)
-    private int rating;
+    private BigDecimal rating;
 
     @Column(nullable = false)
     private String description;
@@ -41,7 +42,7 @@ public class Review {
     @JsonBackReference
     private Movie movie;
 
-    public Review(int rating, String description, User user, Movie movie) {
+    public Review(BigDecimal rating, String description, User user, Movie movie) {
         this.id = UUID.randomUUID().toString();
         this.rating = rating;
         this.description = description;
