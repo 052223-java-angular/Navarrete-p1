@@ -1,7 +1,7 @@
 package com.revature.movietn.repositories;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -26,5 +26,5 @@ public interface ReviewRepository extends JpaRepository<Review, String> {
      * @param movieId the movie id
      * @return a List of Review objects or an empty List
      */
-    public List<Review> findAllByMovieId(String movieId);
+    public Set<Review> findAllByMovieId(String movieId);
 }

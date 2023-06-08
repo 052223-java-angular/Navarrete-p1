@@ -1,11 +1,13 @@
 package com.revature.movietn.services;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.revature.movietn.dtos.responses.ReviewResponse;
 import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.Review;
 import com.revature.movietn.entities.User;
@@ -28,11 +30,11 @@ public class ReviewService {
      *                    requested the review creation
      * @param movie       the Movie object containing information of the movie being
      *                    reviewed
-     * @return the Review object that wsa saved to the db
+     * @return the ReviewResponse object
      */
-    public Review saveReview(BigDecimal rating, String description, User user, Movie movie) {
+    public ReviewResponse saveReview(BigDecimal rating, String description, User user, Movie movie) {
         // save review
-        return reviewRepository.save(new Review(rating, description, user, movie));
+        return new ReviewResponse(reviewRepository.save(new Review(rating, description, user, movie)));
     }
 
     /**
@@ -55,14 +57,22 @@ public class ReviewService {
      * Finds all reviews for a movie using the movie id.
      * 
      * @param movieId the movie id
-     * @return a List of Review objects if reviews were found, otherwise throws a
+     * @return a List of ReviewResponse objects if reviews were found, otherwise
+     *         throws a
      *         ResourceNotFoundException
      */
-    public List<Review> findAllByMovieId(String movieId) {
-        List<Review> foundReviews = reviewRepository.findAllByMovieId(movieId);
+    public Set<ReviewResponse> findAllByMovieId(String movieId) {
+        Set<Review> foundReviews = reviewRepository.findAllByMovieId(movieId);
         if (foundReviews.isEmpty()) {
             throw new ResourceNotFoundException("No reviews for this movie.");
         }
-        return reviewRepository.findAllByMovieId(movieId);
+
+        // iterate over list and create ReviewResponse list
+        Set<ReviewResponse> reviewResponseSet = new HashSet<>();
+        for (Review review : foundReviews) {
+            reviewResponseSet.add(new ReviewResponse(review));
+        }
+
+        return reviewResponseSet;
     }
 }

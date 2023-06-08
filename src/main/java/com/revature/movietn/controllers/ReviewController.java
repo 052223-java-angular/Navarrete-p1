@@ -1,8 +1,8 @@
 package com.revature.movietn.controllers;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.revature.movietn.dtos.requests.GetAllReviewsRequest;
 import com.revature.movietn.dtos.requests.ReviewRequest;
 import com.revature.movietn.dtos.responses.Principal;
+import com.revature.movietn.dtos.responses.ReviewResponse;
 import com.revature.movietn.entities.Movie;
-import com.revature.movietn.entities.Review;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.services.JwtTokenService;
 import com.revature.movietn.services.MovieService;
@@ -46,10 +46,11 @@ public class ReviewController {
      * 
      * @param req  the RevewRequest object mapped from request body
      * @param sreq the HttpServletRequest object containing the auth token
-     * @return the ResponseEntity object with a status set to success or failure
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the ReviewResponse object
      */
     @PostMapping
-    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewRequest req, HttpServletRequest sreq) {
+    public ResponseEntity<ReviewResponse> createReview(@Valid @RequestBody ReviewRequest req, HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
 
@@ -75,10 +76,11 @@ public class ReviewController {
         Movie updatedMovie = movieService.updateMovie(foundMovie.get(), req.getRating());
 
         // save review
-        reviewService.saveReview(req.getRating(), req.getDescription(), foundUser, updatedMovie);
+        ReviewResponse reviewResponse = reviewService.saveReview(req.getRating(), req.getDescription(), foundUser,
+                updatedMovie);
 
         // respond 201 - OK
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(reviewResponse);
     }
 
     /**
@@ -88,10 +90,11 @@ public class ReviewController {
      * 
      * @param req  the GetAllReviewsRequest object mapped from the request body
      * @param sreq the HttpServletRequest object containing the auth token
-     * @return the ResponseEntity object with a status set to success or failure
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         the body containing the ReviewResponse object
      */
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviewsForMovie(@Valid @RequestBody GetAllReviewsRequest req,
+    public ResponseEntity<Set<ReviewResponse>> getAllReviewsForMovie(@Valid @RequestBody GetAllReviewsRequest req,
             HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
@@ -103,9 +106,9 @@ public class ReviewController {
         jwtTokenService.validateToken(token, new Principal(foundUser));
 
         // get all reviews
-        List<Review> reviews = reviewService.findAllByMovieId(req.getMovieId());
+        Set<ReviewResponse> reviewResponseSet = reviewService.findAllByMovieId(req.getMovieId());
 
         // respond 201 - OK
-        return ResponseEntity.status(HttpStatus.OK).body(reviews);
+        return ResponseEntity.status(HttpStatus.OK).body(reviewResponseSet);
     }
 }
