@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.GetAllReviewsRequest;
+import com.revature.movietn.dtos.requests.ModifyReviewRequest;
 import com.revature.movietn.dtos.requests.NewReviewRequest;
 import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.dtos.responses.ReviewResponse;
 import com.revature.movietn.entities.Movie;
+import com.revature.movietn.entities.Review;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.services.JwtTokenService;
 import com.revature.movietn.services.MovieService;
@@ -115,7 +117,7 @@ public class ReviewController {
     }
 
     @PutMapping
-    public ResponseEntity<ReviewResponse> updateReview(@Valid @RequestBody NewReviewRequest req,
+    public ResponseEntity<ReviewResponse> updateReview(@Valid @RequestBody ModifyReviewRequest req,
             HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
@@ -125,6 +127,15 @@ public class ReviewController {
 
         // validate token
         jwtTokenService.validateToken(token, new Principal(foundUser));
+
+        // find review
+        Review foundReview = reviewService.findById(req.getId());
+
+        // modify review
+        foundReview.setRating(req.getRating());
+        foundReview.setDescription(req.getDescription());
+
+        // update review
 
         return null;
     }

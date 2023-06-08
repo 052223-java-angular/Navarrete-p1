@@ -75,4 +75,12 @@ public class ReviewService {
 
         return reviewResponseSet;
     }
+
+    public Review findById(String reviewId) {
+        Optional<Review> foundReview = reviewRepository.findById(reviewId);
+        if (foundReview.isEmpty()) {
+            throw new ResourceNotFoundException("Review not found");
+        }
+        return foundReview.get();
+    }
 }
