@@ -13,6 +13,4 @@ import lombok.Setter;
 public class GetAllReviewsRequest {
     @NotBlank(message = "UserId must not be empty.")
     private String userId;
-    @NotBlank(message = "MovieId must not be empty.")
-    private String movieId;
 }

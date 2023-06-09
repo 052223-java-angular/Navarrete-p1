@@ -17,8 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ModifyReviewRequest {
-    @NotBlank(message = "Id should not be empty.")
-    private String id;
     @NotNull(message = "Rating should not be empty.")
     @PositiveOrZero(message = "Rating must be a positive number.")
     @DecimalMax(value = "10.0", inclusive = true, message = "Rating must not exceed 10.0.")

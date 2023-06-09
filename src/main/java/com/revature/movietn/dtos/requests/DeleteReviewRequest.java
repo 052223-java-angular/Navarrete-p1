@@ -11,8 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DeleteReviewRequest {
-    @NotBlank(message = "Id should not be empty.")
-    private String id;
     @NotBlank(message = "UserId should not be empty.")
     private String userId;
     @NotBlank(message = "Message should not be empty.")

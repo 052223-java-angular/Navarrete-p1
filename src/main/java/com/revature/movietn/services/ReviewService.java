@@ -89,12 +89,13 @@ public class ReviewService {
      * Updates review in db with new rating and description and updates related
      * movie total votes and total rating.
      * 
-     * @param req the ModifyReviewRequest object containing review information
+     * @param reviewId the review id
+     * @param req      the ModifyReviewRequest object containing review information
      * @return the ReviewResponse object
      */
-    public ReviewResponse updateReview(ModifyReviewRequest req) {
+    public ReviewResponse updateReview(String reviewId, ModifyReviewRequest req) {
         // get review from db
-        Optional<Review> foundReview = reviewRepository.findById(req.getId());
+        Optional<Review> foundReview = reviewRepository.findById(reviewId);
         if (foundReview.isEmpty()) {
             throw new ResourceNotFoundException("Review not found");
         }
@@ -114,11 +115,12 @@ public class ReviewService {
     /**
      * Deletes review and updates related movie total votes and total rating.
      * 
-     * @param req the DeleteReviewRequest object
+     * @param reviewId the review id
+     * @param req      the DeleteReviewRequest object
      */
-    public void deleteReview(DeleteReviewRequest req) {
+    public void deleteReview(String reviewId, DeleteReviewRequest req) {
         // get review from db
-        Optional<Review> foundReview = reviewRepository.findById(req.getId());
+        Optional<Review> foundReview = reviewRepository.findById(reviewId);
         if (foundReview.isEmpty()) {
             throw new ResourceNotFoundException("Review not found");
         }
@@ -128,7 +130,7 @@ public class ReviewService {
         movieService.updateMovieWithDeletedReview(req.getMovieId(), review.getRating());
 
         // delete review from db
-        reviewRepository.deleteById(req.getId());
+        reviewRepository.deleteById(reviewId);
     }
 
     /**

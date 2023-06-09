@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.DeleteReviewRequest;
@@ -25,6 +27,7 @@ import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -76,13 +79,15 @@ public class ReviewController {
      * from the database using the movieId. To retrieve reviews the user must exist
      * and must have a valid token.
      * 
-     * @param req  the GetAllReviewsRequest object mapped from the request body
-     * @param sreq the HttpServletRequest object containing the auth token
+     * @param req     the GetAllReviewsRequest object mapped from the request body
+     * @param movieId the movie id
+     * @param sreq    the HttpServletRequest object containing the auth token
      * @return the ResponseEntity object with a status set to success or failure and
      *         the body containing the ReviewResponse object
      */
     @GetMapping
     public ResponseEntity<Set<ReviewResponse>> getAllReviewsForMovie(@Valid @RequestBody GetAllReviewsRequest req,
+            @RequestParam String movieId,
             HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
@@ -94,7 +99,7 @@ public class ReviewController {
         jwtTokenService.validateToken(token, principal);
 
         // get all reviews
-        Set<ReviewResponse> reviewResponseSet = reviewService.findAllByMovieId(req.getMovieId());
+        Set<ReviewResponse> reviewResponseSet = reviewService.findAllByMovieId(movieId);
 
         // respond 201 - OK
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseSet);
@@ -107,13 +112,15 @@ public class ReviewController {
      * matching user id and movie id) to avoid issues where a user alters reviews
      * that don't belong to them or for the incorrect movie.
      * 
-     * @param req  the ModifyReviewRequest object mapped from the request body
-     * @param sreq the HttpServletRequest object containing the auth token
+     * @param req      the ModifyReviewRequest object mapped from the request body
+     * @param reviewId the review id
+     * @param sreq     the HttpServletRequest object containing the auth token
      * @return the ResponseEntity object with a status set to success or failure and
      *         the body containing the ReviewResponse object
      */
-    @PutMapping
+    @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(@Valid @RequestBody ModifyReviewRequest req,
+            @PathVariable("reviewId") @NotBlank String reviewId,
             HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
@@ -125,10 +132,10 @@ public class ReviewController {
         jwtTokenService.validateToken(token, principal);
 
         // validate data belongs to user and is related between each other
-        reviewService.validateRequestData(req.getId(), req.getUserId(), req.getMovieId());
+        reviewService.validateRequestData(reviewId, req.getUserId(), req.getMovieId());
 
         // update review
-        ReviewResponse newReview = reviewService.updateReview(req);
+        ReviewResponse newReview = reviewService.updateReview(reviewId, req);
 
         return ResponseEntity.status(HttpStatus.OK).body(newReview);
     }
@@ -140,13 +147,15 @@ public class ReviewController {
      * matching user id and movie id) to avoid issues where a user alters reviews
      * that don't belong to them or for the incorrect movie.
      * 
-     * @param req  the DeleteReviewRequest object mapped from the request body
-     * @param sreq the HttpServletRequest object containing the auth token
+     * @param req      the DeleteReviewRequest object mapped from the request body
+     * @param reviewId the review id
+     * @param sreq     the HttpServletRequest object containing the auth token
      * @return the ResponseEntity object with a status set to success or failure and
      *         the body containing the ReviewResponse object
      */
-    @DeleteMapping
-    public ResponseEntity<?> deleteReview(@Valid @RequestBody DeleteReviewRequest req, HttpServletRequest sreq) {
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> deleteReview(@Valid @RequestBody DeleteReviewRequest req,
+            @PathVariable("reviewId") @NotBlank String reviewId, HttpServletRequest sreq) {
         // get token
         String token = sreq.getHeader("auth_token");
 
@@ -157,10 +166,10 @@ public class ReviewController {
         jwtTokenService.validateToken(token, principal);
 
         // validate review belongs to user and is related between each other
-        reviewService.validateRequestData(req.getId(), req.getUserId(), req.getMovieId());
+        reviewService.validateRequestData(reviewId, req.getUserId(), req.getMovieId());
 
         // delete review
-        reviewService.deleteReview(req);
+        reviewService.deleteReview(reviewId, req);
 
         // respond with 204 -
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
