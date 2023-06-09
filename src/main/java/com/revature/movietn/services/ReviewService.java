@@ -28,7 +28,7 @@ public class ReviewService {
     /**
      * Saves a review to the db.
      * 
-     * @param review the Review object
+     * @param req the NewReviewRequest object containing review information
      * @return the ReviewResponse object
      */
     public ReviewResponse saveReview(NewReviewRequest req) {
@@ -85,14 +85,13 @@ public class ReviewService {
         return reviewResponseSet;
     }
 
-    public ReviewResponse findById(String reviewId) {
-        Optional<Review> foundReview = reviewRepository.findById(reviewId);
-        if (foundReview.isEmpty()) {
-            throw new ResourceNotFoundException("Review not found");
-        }
-        return new ReviewResponse(foundReview.get());
-    }
-
+    /**
+     * Updates review in db with new rating and description and updates related
+     * movie total votes and total rating.
+     * 
+     * @param req the ModifyReviewRequest object containing review information
+     * @return the ReviewResponse object
+     */
     public ReviewResponse updateReview(ModifyReviewRequest req) {
         // get review from db
         Optional<Review> foundReview = reviewRepository.findById(req.getId());
@@ -112,6 +111,11 @@ public class ReviewService {
         return new ReviewResponse(reviewRepository.save(review));
     }
 
+    /**
+     * Deletes review and updates related movie total votes and total rating.
+     * 
+     * @param req the DeleteReviewRequest object
+     */
     public void deleteReview(DeleteReviewRequest req) {
         // get review from db
         Optional<Review> foundReview = reviewRepository.findById(req.getId());
@@ -127,6 +131,16 @@ public class ReviewService {
         reviewRepository.deleteById(req.getId());
     }
 
+    /**
+     * Validates the request data to ensure that it has a valid combination of data
+     * (i.e. Review object in db has matching user id and movie id) to avoid issues
+     * where a user alters reviews that don't belong to them or for the incorrect
+     * movie.
+     * 
+     * @param id      the review id
+     * @param userId  the user id
+     * @param movieId the movie id
+     */
     public void validateRequestData(String id, String userId, String movieId) {
         Optional<Review> foundReview = reviewRepository.findById(id);
         if (foundReview.isEmpty()) {

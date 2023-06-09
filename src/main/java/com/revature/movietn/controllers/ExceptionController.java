@@ -86,6 +86,14 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
 
+    /**
+     * This exception handler handles all errors relating to bad requests such as
+     * invalid combination of data.
+     * 
+     * @param e the BadRequestException
+     * @return the ResponseEntity object with a status of 400 - BAD_REQUEST and
+     *         a body with the timestamp and message.
+     */
     @ExceptionHandler
     public ResponseEntity<Map<String, Object>> badRequestExceptionHandler(BadRequestException e) {
         Map<String, Object> resBody = new HashMap<>();

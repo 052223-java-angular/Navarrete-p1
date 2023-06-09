@@ -72,7 +72,7 @@ public class ReviewController {
     }
 
     /**
-     * Reviews endpoint that handles get request to retrieve all reviews for a movie
+     * Review endpoint that handles get request to retrieve all reviews for a movie
      * from the database using the movieId. To retrieve reviews the user must exist
      * and must have a valid token.
      * 
@@ -100,6 +100,18 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(reviewResponseSet);
     }
 
+    /**
+     * Review endpoint that handles requests to update a review. To update a review
+     * the user must have authorization. The request data is also validated to
+     * ensure that it has a valid combination of data (i.e. Review object in db has
+     * matching user id and movie id) to avoid issues where a user alters reviews
+     * that don't belong to them or for the incorrect movie.
+     * 
+     * @param req  the ModifyReviewRequest object mapped from the request body
+     * @param sreq the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         the body containing the ReviewResponse object
+     */
     @PutMapping
     public ResponseEntity<ReviewResponse> updateReview(@Valid @RequestBody ModifyReviewRequest req,
             HttpServletRequest sreq) {
@@ -121,6 +133,18 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(newReview);
     }
 
+    /**
+     * Review endpoint that handles requests to delete a review. To delete a review
+     * the user must have authorization. The request data is also validated to
+     * ensure that it has a valid combination of data (i.e. Review object in db has
+     * matching user id and movie id) to avoid issues where a user alters reviews
+     * that don't belong to them or for the incorrect movie.
+     * 
+     * @param req  the DeleteReviewRequest object mapped from the request body
+     * @param sreq the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         the body containing the ReviewResponse object
+     */
     @DeleteMapping
     public ResponseEntity<?> deleteReview(@Valid @RequestBody DeleteReviewRequest req, HttpServletRequest sreq) {
         // get token

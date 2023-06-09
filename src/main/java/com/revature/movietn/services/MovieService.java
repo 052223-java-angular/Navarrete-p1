@@ -61,6 +61,16 @@ public class MovieService {
         return new MovieResponse(movieRepository.save(movie));
     }
 
+    /**
+     * Updates movie total rating when a review was modified. To update the total
+     * rating the previous rating needs to be removed and then the new rating needs
+     * to be added. total votes does not need to change.
+     * 
+     * @param id         the review id
+     * @param prevRating the previous review rating
+     * @param newRating  the new review rating
+     * @return the MovieResponse object containing the updated movie information
+     */
     public MovieResponse updateMovieWithModifiedReview(String id, BigDecimal prevRating, BigDecimal newRating) {
         Optional<Movie> foundMovie = movieRepository.findById(id);
         if (foundMovie.isEmpty()) {
@@ -79,6 +89,15 @@ public class MovieService {
         return new MovieResponse(movieRepository.save(movie));
     }
 
+    /**
+     * Updates movie total rating and total votes when a review was deleted. To
+     * update the total rating the previous rating needs to be removed. total votes
+     * is subtracted by one because one review was removed.
+     * 
+     * @param id     the review id
+     * @param rating the rating
+     * @return the MovieResponse object containing the updated movie information
+     */
     public MovieResponse updateMovieWithDeletedReview(String id, BigDecimal rating) {
         Optional<Movie> foundMovie = movieRepository.findById(id);
         if (foundMovie.isEmpty()) {
