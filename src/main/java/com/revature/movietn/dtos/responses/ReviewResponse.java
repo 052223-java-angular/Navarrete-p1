@@ -20,11 +20,13 @@ public class ReviewResponse {
     private BigDecimal rating;
     private String description;
     private String username;
+    // private String avatar;
 
     public ReviewResponse(Review review) {
         this.id = review.getId();
         this.rating = review.getRating();
         this.description = review.getDescription();
         this.username = review.getUser().getUsername();
+        // this.avatar = review.getUser().getProfile().getAvatar();
     }
 }

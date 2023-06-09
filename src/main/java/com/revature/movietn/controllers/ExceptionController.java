@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
+import com.revature.movietn.utils.custom_exceptions.BadRequestException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -82,6 +83,14 @@ public class ExceptionController {
             resBody.put(fieldName, errorMessage);
         });
         resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, Object>> badRequestExceptionHandler(BadRequestException e) {
+        Map<String, Object> resBody = new HashMap<>();
+        resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        resBody.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
 }

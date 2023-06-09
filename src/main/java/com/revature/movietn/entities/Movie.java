@@ -2,6 +2,7 @@ package com.revature.movietn.entities;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

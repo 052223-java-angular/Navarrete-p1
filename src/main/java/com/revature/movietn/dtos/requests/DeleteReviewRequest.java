@@ -10,9 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GetAllReviewsRequest {
-    @NotBlank(message = "UserId must not be empty.")
+public class DeleteReviewRequest {
+    @NotBlank(message = "Id should not be empty.")
+    private String id;
+    @NotBlank(message = "UserId should not be empty.")
     private String userId;
-    @NotBlank(message = "MovieId must not be empty.")
+    @NotBlank(message = "Message should not be empty.")
     private String movieId;
 }

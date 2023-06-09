@@ -25,7 +25,7 @@ public class NewReviewRequest {
     @NotBlank(message = "Description should not be empty.")
     private String description;
     @NotBlank(message = "Username should not be empty.")
-    private String username;
+    private String userId;
     @NotBlank(message = "MovieId should not be empty.")
     private String movieId;
 }
