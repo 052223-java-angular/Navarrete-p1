@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.DeleteReviewRequest;
-import com.revature.movietn.dtos.requests.GetAllReviewsRequest;
+import com.revature.movietn.dtos.requests.GetAllReviewsForMovieRequest;
 import com.revature.movietn.dtos.requests.ModifyReviewRequest;
 import com.revature.movietn.dtos.requests.NewReviewRequest;
 import com.revature.movietn.dtos.responses.Principal;
@@ -85,8 +85,9 @@ public class ReviewController {
      * @return the ResponseEntity object with a status set to success or failure and
      *         the body containing the ReviewResponse object
      */
-    @GetMapping
-    public ResponseEntity<Set<ReviewResponse>> getAllReviewsForMovie(@Valid @RequestBody GetAllReviewsRequest req,
+    @GetMapping(params = "movieId")
+    public ResponseEntity<Set<ReviewResponse>> getAllReviewsForMovie(
+            @Valid @RequestBody GetAllReviewsForMovieRequest req,
             @RequestParam String movieId,
             HttpServletRequest sreq) {
         // get token
@@ -173,5 +174,34 @@ public class ReviewController {
 
         // respond with 204 -
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * Review endpoint that handles get request to retrieve all reviews for a user
+     * from the database using the userId. To retrieve reviews the user must exist
+     * and must have a valid token.
+     * 
+     * @param userId the user id
+     * @param sreq   the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         the body containing the ReviewResponse object
+     */
+    @GetMapping(params = "userId")
+    public ResponseEntity<Set<ReviewResponse>> getAllReviewsForUser(@RequestParam String userId,
+            HttpServletRequest sreq) {
+        // get token
+        String token = sreq.getHeader("auth_token");
+
+        // get Principal object with user info
+        Principal principal = userService.findById(userId);
+
+        // validate token
+        jwtTokenService.validateToken(token, principal);
+
+        // get all reviews
+        Set<ReviewResponse> reviewResponseSet = reviewService.findAllByUserId(userId);
+
+        // respond 201 - OK
+        return ResponseEntity.status(HttpStatus.OK).body(reviewResponseSet);
     }
 }

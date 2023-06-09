@@ -67,13 +67,34 @@ public class ReviewService {
      * 
      * @param movieId the movie id
      * @return a List of ReviewResponse objects if reviews were found, otherwise
-     *         throws a
-     *         ResourceNotFoundException
+     *         throws a ResourceNotFoundException
      */
     public Set<ReviewResponse> findAllByMovieId(String movieId) {
         Set<Review> foundReviews = reviewRepository.findAllByMovieId(movieId);
         if (foundReviews.isEmpty()) {
             throw new ResourceNotFoundException("No reviews for this movie.");
+        }
+
+        // iterate over list and create ReviewResponse list
+        Set<ReviewResponse> reviewResponseSet = new HashSet<>();
+        for (Review review : foundReviews) {
+            reviewResponseSet.add(new ReviewResponse(review));
+        }
+
+        return reviewResponseSet;
+    }
+
+    /**
+     * Finds all reviews for a user using the user id
+     * 
+     * @param userId the user id
+     * @return a List of REviewResponse objects if reviews were found, otherwise
+     *         throws a ResourceNotFoundException
+     */
+    public Set<ReviewResponse> findAllByUserId(String userId) {
+        Set<Review> foundReviews = reviewRepository.findAllByUserId(userId);
+        if (foundReviews.isEmpty()) {
+            throw new ResourceNotFoundException("No reviews for this user.");
         }
 
         // iterate over list and create ReviewResponse list

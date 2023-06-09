@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class GetAllReviewsRequest {
+public class GetAllReviewsForMovieRequest {
     @NotBlank(message = "UserId must not be empty.")
     private String userId;
 }

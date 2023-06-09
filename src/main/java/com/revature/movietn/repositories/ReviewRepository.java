@@ -27,4 +27,12 @@ public interface ReviewRepository extends JpaRepository<Review, String> {
      * @return a List of Review objects or an empty List
      */
     public Set<Review> findAllByMovieId(String movieId);
+
+    /**
+     * Finds all reviews for a user using the user id
+     * 
+     * @param userId the user id
+     * @return a List of Review objects or an empty List
+     */
+    public Set<Review> findAllByUserId(String userId);
 }
