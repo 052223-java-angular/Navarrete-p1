@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
+import com.revature.movietn.utils.custom_exceptions.BadRequestException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -82,6 +83,22 @@ public class ExceptionController {
             resBody.put(fieldName, errorMessage);
         });
         resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+    /**
+     * This exception handler handles all errors relating to bad requests such as
+     * invalid combination of data.
+     * 
+     * @param e the BadRequestException
+     * @return the ResponseEntity object with a status of 400 - BAD_REQUEST and
+     *         a body with the timestamp and message.
+     */
+    @ExceptionHandler
+    public ResponseEntity<Map<String, Object>> badRequestExceptionHandler(BadRequestException e) {
+        Map<String, Object> resBody = new HashMap<>();
+        resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        resBody.put("message", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }
 }

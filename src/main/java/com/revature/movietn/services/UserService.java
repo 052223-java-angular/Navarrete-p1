@@ -20,10 +20,31 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
 
-    public User findByUsername(String username) {
+    /**
+     * Finds a user by a user id.
+     * 
+     * @param id the user id
+     * @return the Principal object containing the user information
+     */
+    public Principal findById(String id) {
+        Optional<User> foundUser = userRepository.findById(id);
+        if (foundUser.isPresent()) {
+            return new Principal(foundUser.get());
+        }
+
+        throw new ResourceNotFoundException("User not found.");
+    }
+
+    /**
+     * Finds a user by username.
+     * 
+     * @param username the username
+     * @return the Principal object containing user information.
+     */
+    public Principal findByUsername(String username) {
         Optional<User> foundUser = userRepository.findByUsername(username);
         if (foundUser.isPresent()) {
-            return foundUser.get();
+            return new Principal(foundUser.get());
         }
 
         throw new ResourceNotFoundException("User not found.");

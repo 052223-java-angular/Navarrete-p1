@@ -64,10 +64,12 @@ public class JwtTokenService {
             if (!claims.getSubject().equals(principal.getUsername()) ||
                     !claims.get("id", String.class).equals(principal.getId()) ||
                     !claims.get("role", String.class).equals(principal.getRole())) {
-                throw new UnauthorizedAccessException("Invalid token.");
+                throw new UnauthorizedAccessException("Invalid Token");
             }
 
-        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | ExpiredJwtException
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedAccessException("Expired token.");
+        } catch (UnsupportedJwtException | MalformedJwtException | SignatureException
                 | IllegalArgumentException e) {
             throw new UnauthorizedAccessException("Invalid token.");
         }

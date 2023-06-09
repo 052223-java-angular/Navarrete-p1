@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ReviewRequest {
+public class ModifyReviewRequest {
     @NotNull(message = "Rating should not be empty.")
     @PositiveOrZero(message = "Rating must be a positive number.")
     @DecimalMax(value = "10.0", inclusive = true, message = "Rating must not exceed 10.0.")
@@ -24,8 +24,8 @@ public class ReviewRequest {
     private BigDecimal rating;
     @NotBlank(message = "Description should not be empty.")
     private String description;
-    @NotBlank(message = "Username should not be empty.")
-    private String username;
-    @NotBlank(message = "MovieId should not be empty.")
+    @NotBlank(message = "UserId should not be empty.")
+    private String userId;
+    @NotBlank(message = "Message should not be empty.")
     private String movieId;
 }
