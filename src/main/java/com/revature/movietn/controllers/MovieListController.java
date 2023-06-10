@@ -30,6 +30,16 @@ public class MovieListController {
     private final JwtTokenService jwtTokenService;
     private final MovieListService movieListService;
 
+    /**
+     * Movie list endpoint that handles get request to retrieve all movie list for a
+     * user from the database using the userId. To retrieve movie list the user must
+     * exist and must have a valid token.
+     * 
+     * @param userId the user id
+     * @param sreq   the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         the body containing a Set of MovieListResponse objects
+     */
     @GetMapping(params = "userId")
     public ResponseEntity<Set<MovieListResponse>> getAllMovieListsForUser(@RequestParam String userId,
             HttpServletRequest sreq) {
@@ -48,6 +58,17 @@ public class MovieListController {
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponses);
     }
 
+    /**
+     * Movie list endpoint that handles requests to create a movie list. To create a
+     * movie list the user must exist and must have a valid token. The user must
+     * also not have a movie list already in the db with the same name. If all these
+     * validations check out then a movie list is created.
+     * 
+     * @param req  the NewMovieListRequest object mapped from request body
+     * @param sreq the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the MovieListResponse object
+     */
     @PostMapping
     public ResponseEntity<MovieListResponse> createMovieList(@Valid @RequestBody NewMovieListRequest req,
             HttpServletRequest sreq) {

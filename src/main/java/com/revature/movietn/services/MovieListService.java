@@ -21,6 +21,15 @@ import lombok.AllArgsConstructor;
 public class MovieListService {
     private final MovieListRepository movieListRepository;
 
+    /**
+     * Saves new movie list to db. Before creating a new movie list there is a
+     * validation check to make sure that the movie list doesn't already exist in
+     * the db. This check is made to ensure that duplicate movie lists are not
+     * created.
+     * 
+     * @param req the NewMovieListRequest object with movie list information
+     * @return the MovieListResponse object
+     */
     public MovieListResponse saveMovieLIst(NewMovieListRequest req) {
         // transform name to lowercase
         String name = req.getName().toLowerCase();
@@ -43,6 +52,12 @@ public class MovieListService {
         return new MovieListResponse(movieListRepository.save(movieList));
     }
 
+    /**
+     * Finds all movie lists that belong to a user using the userId.
+     * 
+     * @param userId the user id
+     * @return a Set of MovieListResponse objects
+     */
     public Set<MovieListResponse> findAllByUserId(String userId) {
         // get all movie lists for user
         Set<MovieList> movieLists = movieListRepository.findAllByUserId(userId);
