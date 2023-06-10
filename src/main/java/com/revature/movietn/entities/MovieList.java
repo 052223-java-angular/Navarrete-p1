@@ -1,5 +1,6 @@
 package com.revature.movietn.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,5 +47,6 @@ public class MovieList {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.user = user;
+        this.movies = new HashSet<>();
     }
 }
