@@ -4,15 +4,19 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
 import com.revature.movietn.dtos.requests.NewMovieListRequest;
 import com.revature.movietn.dtos.responses.MovieListResponse;
+import com.revature.movietn.dtos.responses.MovieResponse;
+import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.MovieList;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.MovieListRepository;
+import com.revature.movietn.utils.custom_exceptions.BadRequestException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
+import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -20,6 +24,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class MovieListService {
     private final MovieListRepository movieListRepository;
+    private final MovieService movieService;
 
     /**
      * Saves new movie list to db. Before creating a new movie list there is a
@@ -53,10 +58,34 @@ public class MovieListService {
     }
 
     /**
+     * Finds a movie list using the movieId. Validates that the movie list belongs
+     * to the user using the userId.
+     * 
+     * @param movieListId the movie list id
+     * @param userId      the user id
+     * @return the MovieListResponse object
+     */
+    public MovieListResponse findById(String movieListId, String userId) {
+        // get movie list
+        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
+        if (foundMovieList.isEmpty()) {
+            throw new ResourceNotFoundException("Movie list was not found.");
+        }
+        MovieList movieList = foundMovieList.get();
+
+        // validate request data
+        if (!movieList.getUser().getId().equals(userId)) {
+            throw new BadRequestException("User does not own move list.");
+        }
+
+        return new MovieListResponse(movieList);
+    }
+
+    /**
      * Finds all movie lists that belong to a user using the userId.
      * 
      * @param userId the user id
-     * @return a Set of MovieListResponse objects
+     * @return the Set of MovieListResponse objects
      */
     public Set<MovieListResponse> findAllByUserId(String userId) {
         // get all movie lists for user
@@ -65,18 +94,46 @@ public class MovieListService {
 
         // transform data into dto set
         for (MovieList movieList : movieLists) {
-            // transform name to have uppercase first letter of each word.
-            String[] words = movieList.getName().split(" ");
-            for (int index = 0; index < words.length; index++) {
-                words[index] = StringUtils.capitalize(words[index]);
-            }
-            movieList.setName(String.join(" ", words));
-
-            // add movie response
             movieListResponses.add(new MovieListResponse(movieList));
         }
 
         // return set
         return movieListResponses;
+    }
+
+    /**
+     * Adds a movie to a movie list. If the movie list does not exist in the db then
+     * a ResourceNotFoundException is thrown. Request data is validated to ensure
+     * that the user owns the movie list before persisting change to db. Once this
+     * validation checks out the movie is added to movie list in db.
+     * 
+     * @param id  the movieListId
+     * @param req the AddMovieToMovieListRequest object
+     * @return the MovieListResponse object
+     */
+    public MovieListResponse addMovieToMovieList(String id, AddMovieToMovieListRequest req) {
+        // get movie list
+        Optional<MovieList> foundMovieList = movieListRepository.findById(id);
+        if (foundMovieList.isEmpty()) {
+            throw new ResourceNotFoundException("Movie list not found.");
+        }
+        MovieList movieList = foundMovieList.get();
+
+        // get movie
+        MovieResponse movieResponse = movieService.findById(req.getMovieId());
+        Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
+
+        // validate request data
+        if (!movieList.getUser().getId().equals(req.getUserId())) {
+            throw new BadRequestException("User does not own movie list.");
+        }
+
+        // add movie
+        Set<Movie> movies = movieList.getMovies();
+        movies.add(movie);
+        movieList.setMovies(movies);
+
+        // save movie list to db
+        return new MovieListResponse(movieListRepository.save(movieList));
     }
 }
