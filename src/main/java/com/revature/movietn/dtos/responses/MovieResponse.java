@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import com.revature.movietn.entities.Movie;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class MovieResponse {
     private String id;
     private BigDecimal totalRating;

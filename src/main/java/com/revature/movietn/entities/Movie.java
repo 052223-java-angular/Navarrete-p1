@@ -1,6 +1,7 @@
 package com.revature.movietn.entities;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -38,15 +39,19 @@ public class Movie {
 
     @OneToMany(mappedBy = "movie", fetch = FetchType.LAZY)
     @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<Review> reviews;
 
     @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "movies")
+    @EqualsAndHashCode.Exclude
     private Set<MovieList> movieLists;
 
     public Movie(String id, BigDecimal totalRating, int totalVotes) {
         this.id = id;
         this.totalRating = totalRating;
         this.totalVotes = totalVotes;
+        this.reviews = new HashSet<>();
+        this.movieLists = new HashSet<>();
     }
 }
