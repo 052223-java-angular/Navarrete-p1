@@ -11,6 +11,7 @@ import com.revature.movietn.dtos.requests.LoginUserRequest;
 import com.revature.movietn.dtos.requests.NewUserRequest;
 import com.revature.movietn.dtos.responses.Principal;
 import com.revature.movietn.services.JwtTokenService;
+import com.revature.movietn.services.MovieListService;
 import com.revature.movietn.services.UserService;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 
@@ -23,6 +24,7 @@ import lombok.AllArgsConstructor;
 public class AuthController {
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
+    private final MovieListService movieListService;
 
     /**
      * Register API endpoint that handles registration of a user. Prior to saving a
@@ -63,7 +65,10 @@ public class AuthController {
         }
 
         // register user
-        userService.register(req.getUsername(), req.getEmail(), req.getPassword());
+        Principal principal = userService.register(req.getUsername(), req.getEmail(), req.getPassword());
+
+        // set up default movie lists
+        movieListService.saveDefaultMovieLists(principal.getId());
 
         // return 201 - CREATED
         return ResponseEntity.status(HttpStatus.CREATED).build();
