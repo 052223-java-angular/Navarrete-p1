@@ -27,10 +27,15 @@ public class MovieService {
      */
     public MovieResponse findById(String id) {
         Optional<Movie> foundMovie = movieRepository.findById(id);
+        Movie movie;
         if (foundMovie.isEmpty()) {
-            throw new ResourceNotFoundException("Movie not found.");
+            movie = new Movie(id, new BigDecimal("0.00"), 0);
+            movieRepository.save(movie);
+        } else {
+            movie = foundMovie.get();
         }
-        return new MovieResponse(foundMovie.get());
+
+        return new MovieResponse(movie);
     }
 
     /**
