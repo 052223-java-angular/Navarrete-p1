@@ -120,7 +120,7 @@ public class MovieListController {
         jwtTokenService.validateToken(token, principal);
 
         // save movie list
-        MovieListResponse movieListResponse = movieListService.saveMovieLIst(req);
+        MovieListResponse movieListResponse = movieListService.saveMovieList(req);
 
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
     }

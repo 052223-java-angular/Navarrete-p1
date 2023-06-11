@@ -14,7 +14,7 @@ import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.Review;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.ReviewRepository;
-import com.revature.movietn.utils.custom_exceptions.BadRequestException;
+import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
 import lombok.AllArgsConstructor;
@@ -172,7 +172,7 @@ public class ReviewService {
         Review review = foundReview.get();
 
         if (!review.getUser().getId().equals(userId) || !review.getMovie().getId().equals(movieId)) {
-            throw new BadRequestException("Request has an invalid data combination.");
+            throw new ResourceConflictException("Request has an invalid data combination.");
         }
     }
 }

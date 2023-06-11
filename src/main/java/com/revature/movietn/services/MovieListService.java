@@ -1,6 +1,7 @@
 package com.revature.movietn.services;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,7 +17,6 @@ import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.MovieList;
 import com.revature.movietn.entities.User;
 import com.revature.movietn.repositories.MovieListRepository;
-import com.revature.movietn.utils.custom_exceptions.BadRequestException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 
@@ -37,7 +37,7 @@ public class MovieListService {
      * @param req the NewMovieListRequest object with movie list information
      * @return the MovieListResponse object
      */
-    public MovieListResponse saveMovieLIst(NewMovieListRequest req) {
+    public MovieListResponse saveMovieList(NewMovieListRequest req) {
         // transform name to lowercase
         String name = req.getName().toLowerCase();
 
@@ -57,6 +57,36 @@ public class MovieListService {
 
         // save movie list
         return new MovieListResponse(movieListRepository.save(movieList));
+    }
+
+    /**
+     * Save the default movie lists every user has when they are registering: plan
+     * to watch, watching, watched.
+     * 
+     * @param userId the user id
+     * @return the Set of MovieListResponse object
+     */
+    public Set<MovieListResponse> saveDefaultMovieLists(String userId) {
+        // make user
+        User user = new User();
+        user.setId(userId);
+
+        // create movie list set
+        Set<MovieList> movieLists = new HashSet<>();
+        movieLists.add(new MovieList("plan to watch", user));
+        movieLists.add(new MovieList("watching", user));
+        movieLists.add(new MovieList("watched", user));
+
+        // save all movie lists
+        List<MovieList> savedMovieLists = movieListRepository.saveAll(movieLists);
+
+        // transform list of movie lists into response dto
+        Set<MovieListResponse> movieListResponses = new HashSet<>();
+        for (MovieList movieList : savedMovieLists) {
+            movieListResponses.add(new MovieListResponse(movieList));
+        }
+
+        return movieListResponses;
     }
 
     /**
@@ -128,7 +158,7 @@ public class MovieListService {
 
         // validate movie is in movie list
         if (movieList.getMovies().contains(movie)) {
-            throw new BadRequestException("Movie does not belong to movie list");
+            throw new ResourceConflictException("Movie is already in movie list.");
         }
 
         // add movie
@@ -142,7 +172,9 @@ public class MovieListService {
 
     /**
      * Deletes movie list from the db using the movie list id. Before deletion a
-     * check is made to ensure that user owns the movie list.
+     * check is made to ensure that user owns the movie list and the movie list name
+     * is not one of the movie lists excluded from deletion: plan to watch,
+     * watching, and watched.
      * 
      * @param movieListId the movieListId
      * @param req         the DelteMovieListRequest object
@@ -157,6 +189,14 @@ public class MovieListService {
 
         // validate user owns movie list
         validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // validate movie list name is not these 3: plan to watch, watching, and watched
+        String movieListName = movieList.getName();
+        if (movieListName.equals("plan to watch") ||
+                movieListName.equals("watching") ||
+                movieListName.equals("watched")) {
+            throw new ResourceConflictException("Cannot delete movie lists: Plan To Watch, Watching, or Watched");
+        }
 
         // delete movie list
         movieListRepository.delete(movieList);
@@ -187,7 +227,7 @@ public class MovieListService {
 
         // validate movie is in movie list
         if (!movieList.getMovies().contains(movie)) {
-            throw new BadRequestException("Movie does not belong to movie list");
+            throw new ResourceNotFoundException("Movie not found in movie list");
         }
 
         // delete movie from movie list
@@ -202,7 +242,7 @@ public class MovieListService {
     /*********************** Helper Methods ************************ */
     public void validateUserOwnsMovieList(MovieList movieList, String userId) {
         if (!movieList.getUser().getId().equals(userId)) {
-            throw new BadRequestException("User does not own movie list.");
+            throw new ResourceConflictException("User does not own movie list.");
         }
     }
 }
