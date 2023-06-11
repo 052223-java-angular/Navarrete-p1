@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddMovieToMovieLIstRequest {
+public class AddMovieToMovieListRequest {
     @NotBlank(message = "UserId should not be blank.")
     private String userId;
 
