@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
+import com.revature.movietn.dtos.requests.DeleteMovieFromMovieListRequest;
+import com.revature.movietn.dtos.requests.DeleteMovieListRequest;
 import com.revature.movietn.dtos.requests.GetMovieListRequest;
 import com.revature.movietn.dtos.requests.NewMovieListRequest;
 import com.revature.movietn.dtos.responses.MovieListResponse;
@@ -154,5 +157,67 @@ public class MovieListController {
         MovieListResponse movieListResponse = movieListService.addMovieToMovieList(movieListId, req);
 
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
+    }
+
+    /**
+     * Movie list endpoint that handles requests to delete a movie list. Before
+     * deletion user must exist and have a valid token. If the validation checks out
+     * then the service handles movie list deletion.
+     * 
+     * @param req         the DeleteMovieListRequest object mapped from the request
+     *                    body
+     * @param movieListId the movie list id
+     * @param sreq        the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the MovieListResponse object
+     */
+    @DeleteMapping("/{movieListId}")
+    public ResponseEntity<?> deleteMovieList(@Valid @RequestBody DeleteMovieListRequest req,
+            @PathVariable("movieListId") @NotBlank String movieListId, HttpServletRequest sreq) {
+        // get token
+        String token = sreq.getHeader("auth_token");
+
+        // get Principal object with user info
+        Principal principal = userService.findById(req.getUserId());
+
+        // validate token
+        jwtTokenService.validateToken(token, principal);
+
+        // delete movie list
+        movieListService.deleteById(movieListId, req);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Movie list endpoint that handles request to delete a movie from a movie list.
+     * Before deletion user must exist and have a valid token. If the validation
+     * checks out then the service handles movie list deletion.
+     * 
+     * @param req         the DeleteMovieFromMovieListRequest object mapped from the
+     *                    request body
+     * @param movieListId the movie list id
+     * @param movieId     the movie id
+     * @param sreq        the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the MovieListResponse object
+     */
+    @DeleteMapping("/{movieListId}/movies/{movieId}")
+    public ResponseEntity<?> deleteMovieFromMovieList(@Valid @RequestBody DeleteMovieFromMovieListRequest req,
+            @PathVariable("movieListId") @NotBlank String movieListId,
+            @PathVariable("movieId") @NotBlank String movieId, HttpServletRequest sreq) {
+        // get token
+        String token = sreq.getHeader("auth_token");
+
+        // get Principal object with user info
+        Principal principal = userService.findById(req.getUserId());
+
+        // validate token
+        jwtTokenService.validateToken(token, principal);
+
+        // delete movie from movie list
+        movieListService.deleteMovieFromMovieList(movieListId, movieId, req);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

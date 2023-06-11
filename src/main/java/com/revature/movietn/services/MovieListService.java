@@ -7,6 +7,8 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
+import com.revature.movietn.dtos.requests.DeleteMovieFromMovieListRequest;
+import com.revature.movietn.dtos.requests.DeleteMovieListRequest;
 import com.revature.movietn.dtos.requests.NewMovieListRequest;
 import com.revature.movietn.dtos.responses.MovieListResponse;
 import com.revature.movietn.dtos.responses.MovieResponse;
@@ -73,10 +75,8 @@ public class MovieListService {
         }
         MovieList movieList = foundMovieList.get();
 
-        // validate request data
-        if (!movieList.getUser().getId().equals(userId)) {
-            throw new BadRequestException("User does not own move list.");
-        }
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, userId);
 
         return new MovieListResponse(movieList);
     }
@@ -111,9 +111,9 @@ public class MovieListService {
      * @param req the AddMovieToMovieListRequest object
      * @return the MovieListResponse object
      */
-    public MovieListResponse addMovieToMovieList(String id, AddMovieToMovieListRequest req) {
+    public MovieListResponse addMovieToMovieList(String movieListId, AddMovieToMovieListRequest req) {
         // get movie list
-        Optional<MovieList> foundMovieList = movieListRepository.findById(id);
+        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
         if (foundMovieList.isEmpty()) {
             throw new ResourceNotFoundException("Movie list not found.");
         }
@@ -123,9 +123,12 @@ public class MovieListService {
         MovieResponse movieResponse = movieService.findById(req.getMovieId());
         Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
 
-        // validate request data
-        if (!movieList.getUser().getId().equals(req.getUserId())) {
-            throw new BadRequestException("User does not own movie list.");
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // validate movie is in movie list
+        if (movieList.getMovies().contains(movie)) {
+            throw new BadRequestException("Movie does not belong to movie list");
         }
 
         // add movie
@@ -135,5 +138,71 @@ public class MovieListService {
 
         // save movie list to db
         return new MovieListResponse(movieListRepository.save(movieList));
+    }
+
+    /**
+     * Deletes movie list from the db using the movie list id. Before deletion a
+     * check is made to ensure that user owns the movie list.
+     * 
+     * @param movieListId the movieListId
+     * @param req         the DelteMovieListRequest object
+     */
+    public void deleteById(String movieListId, DeleteMovieListRequest req) {
+        // get movie list
+        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
+        if (foundMovieList.isEmpty()) {
+            throw new ResourceNotFoundException("Movie list not found.");
+        }
+        MovieList movieList = foundMovieList.get();
+
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // delete movie list
+        movieListRepository.delete(movieList);
+    }
+
+    /**
+     * Deletes movie from movie list. Before deletion a few checks are made: user
+     * owns movie list and movie is present in movie list.
+     * 
+     * @param movieListId the movieListId
+     * @param movieId     the movieId
+     * @param req         the DeleteMovieFromMovieListRequest object
+     */
+    public void deleteMovieFromMovieList(String movieListId, String movieId, DeleteMovieFromMovieListRequest req) {
+        // get movie list
+        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
+        if (foundMovieList.isEmpty()) {
+            throw new ResourceNotFoundException("Movie list not found.");
+        }
+        MovieList movieList = foundMovieList.get();
+
+        // get movie
+        MovieResponse movieResponse = movieService.findById(movieId);
+        Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
+
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // validate movie is in movie list
+        if (!movieList.getMovies().contains(movie)) {
+            throw new BadRequestException("Movie does not belong to movie list");
+        }
+
+        // delete movie from movie list
+        Set<Movie> movies = movieList.getMovies();
+        movies.remove(movie);
+        movieList.setMovies(movies);
+
+        // save to db
+        movieListRepository.save(movieList);
+    }
+
+    /*********************** Helper Methods ************************ */
+    public void validateUserOwnsMovieList(MovieList movieList, String userId) {
+        if (!movieList.getUser().getId().equals(userId)) {
+            throw new BadRequestException("User does not own movie list.");
+        }
     }
 }

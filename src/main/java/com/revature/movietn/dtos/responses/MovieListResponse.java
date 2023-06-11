@@ -9,6 +9,7 @@ import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.MovieList;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class MovieListResponse {
     private String id;
     private String name;
