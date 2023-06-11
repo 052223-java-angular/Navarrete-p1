@@ -159,6 +159,18 @@ public class MovieListController {
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
     }
 
+    /**
+     * Movie list endpoint that handles requests to delete a movie list. Before
+     * deletion user must exist and have a valid token. If the validation checks out
+     * then the service handles movie list deletion.
+     * 
+     * @param req         the DeleteMovieListRequest object mapped from the request
+     *                    body
+     * @param movieListId the movie list id
+     * @param sreq        the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the MovieListResponse object
+     */
     @DeleteMapping("/{movieListId}")
     public ResponseEntity<?> deleteMovieList(@Valid @RequestBody DeleteMovieListRequest req,
             @PathVariable("movieListId") @NotBlank String movieListId, HttpServletRequest sreq) {
@@ -177,6 +189,19 @@ public class MovieListController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * Movie list endpoint that handles request to delete a movie from a movie list.
+     * Before deletion user must exist and have a valid token. If the validation
+     * checks out then the service handles movie list deletion.
+     * 
+     * @param req         the DeleteMovieFromMovieListRequest object mapped from the
+     *                    request body
+     * @param movieListId the movie list id
+     * @param movieId     the movie id
+     * @param sreq        the HttpServletRequest object containing the auth token
+     * @return the ResponseEntity object with a status set to success or failure and
+     *         body containing the MovieListResponse object
+     */
     @DeleteMapping("/{movieListId}/movies/{movieId}")
     public ResponseEntity<?> deleteMovieFromMovieList(@Valid @RequestBody DeleteMovieFromMovieListRequest req,
             @PathVariable("movieListId") @NotBlank String movieListId,

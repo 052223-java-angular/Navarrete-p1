@@ -75,8 +75,8 @@ public class MovieListService {
         }
         MovieList movieList = foundMovieList.get();
 
-        // validate request data
-        validateRequest(movieList, userId);
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, userId);
 
         return new MovieListResponse(movieList);
     }
@@ -123,8 +123,13 @@ public class MovieListService {
         MovieResponse movieResponse = movieService.findById(req.getMovieId());
         Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
 
-        // validate request data
-        validateRequest(movieList, req.getUserId());
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // validate movie is in movie list
+        if (movieList.getMovies().contains(movie)) {
+            throw new BadRequestException("Movie does not belong to movie list");
+        }
 
         // add movie
         Set<Movie> movies = movieList.getMovies();
@@ -135,6 +140,13 @@ public class MovieListService {
         return new MovieListResponse(movieListRepository.save(movieList));
     }
 
+    /**
+     * Deletes movie list from the db using the movie list id. Before deletion a
+     * check is made to ensure that user owns the movie list.
+     * 
+     * @param movieListId the movieListId
+     * @param req         the DelteMovieListRequest object
+     */
     public void deleteById(String movieListId, DeleteMovieListRequest req) {
         // get movie list
         Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
@@ -143,13 +155,21 @@ public class MovieListService {
         }
         MovieList movieList = foundMovieList.get();
 
-        // validate request data
-        validateRequest(movieList, req.getUserId());
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
 
         // delete movie list
         movieListRepository.delete(movieList);
     }
 
+    /**
+     * Deletes movie from movie list. Before deletion a few checks are made: user
+     * owns movie list and movie is present in movie list.
+     * 
+     * @param movieListId the movieListId
+     * @param movieId     the movieId
+     * @param req         the DeleteMovieFromMovieListRequest object
+     */
     public void deleteMovieFromMovieList(String movieListId, String movieId, DeleteMovieFromMovieListRequest req) {
         // get movie list
         Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
@@ -162,8 +182,13 @@ public class MovieListService {
         MovieResponse movieResponse = movieService.findById(movieId);
         Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
 
-        // validate request data
-        validateRequest(movieList, movie, req.getUserId());
+        // validate user owns movie list
+        validateUserOwnsMovieList(movieList, req.getUserId());
+
+        // validate movie is in movie list
+        if (!movieList.getMovies().contains(movie)) {
+            throw new BadRequestException("Movie does not belong to movie list");
+        }
 
         // delete movie from movie list
         Set<Movie> movies = movieList.getMovies();
@@ -175,19 +200,9 @@ public class MovieListService {
     }
 
     /*********************** Helper Methods ************************ */
-    public void validateRequest(MovieList movieList, String userId) {
+    public void validateUserOwnsMovieList(MovieList movieList, String userId) {
         if (!movieList.getUser().getId().equals(userId)) {
             throw new BadRequestException("User does not own movie list.");
-        }
-    }
-
-    public void validateRequest(MovieList movieList, Movie movie, String userId) {
-        if (!movieList.getUser().getId().equals(userId)) {
-            throw new BadRequestException("User does not own movie list.");
-        }
-
-        if (!movieList.getMovies().contains(movie)) {
-            throw new BadRequestException("Movie does not belong to movie list");
         }
     }
 }
