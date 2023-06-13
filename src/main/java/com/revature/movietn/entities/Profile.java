@@ -1,6 +1,7 @@
 package com.revature.movietn.entities;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -35,4 +36,11 @@ public class Profile {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
+
+    public Profile(String avatar, LocalDate createDate, User user) {
+        this.id = UUID.randomUUID().toString();
+        this.avatar = avatar;
+        this.createDate = createDate;
+        this.user = user;
+    }
 }

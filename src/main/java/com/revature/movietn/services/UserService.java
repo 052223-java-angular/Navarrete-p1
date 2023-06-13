@@ -1,13 +1,18 @@
 package com.revature.movietn.services;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.revature.movietn.dtos.requests.ModifyProfileAvatarRequest;
 import com.revature.movietn.dtos.responses.Principal;
+import com.revature.movietn.dtos.responses.ProfileResponse;
+import com.revature.movietn.entities.Profile;
 import com.revature.movietn.entities.Role;
 import com.revature.movietn.entities.User;
+import com.revature.movietn.repositories.ProfileRepository;
 import com.revature.movietn.repositories.UserRepository;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
 import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
@@ -18,6 +23,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final RoleService roleService;
 
     /**
@@ -151,6 +157,69 @@ public class UserService {
      */
     public boolean isSamePassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
+    }
+
+    /*******************************
+     * Profile Stuff **********************************
+     */
+
+    /**
+     * Gets user profile information in the form of the ProfileResponse object.
+     * 
+     * @param userId the user id
+     * @return the ProfileResponse object
+     */
+    public ProfileResponse getUserProfile(String userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new ResourceNotFoundException("User was not found.");
+        }
+        User user = userOpt.get();
+
+        return new ProfileResponse(user.getProfile());
+    }
+
+    /**
+     * Updates a user's profile avatar with the new avatar inside of the request
+     * object.
+     * 
+     * @param userId the user id
+     * @param req    the ModifyProfileAvatarRequest object
+     * @return the Profile Reponse object
+     */
+    public ProfileResponse updateProfileAvatar(String userId, ModifyProfileAvatarRequest req) {
+        // find user
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new ResourceNotFoundException("User was not found.");
+        }
+        User user = userOpt.get();
+
+        // get profile
+        Profile profile = user.getProfile();
+
+        // modify avatar
+        profile.setAvatar(req.getAvatar());
+
+        // save to db
+        return new ProfileResponse(profileRepository.save(profile));
+    }
+
+    /**
+     * Creates a new profile and saves it to the db.
+     * 
+     * @param userId the user id
+     * @return the ProfileResponse object
+     */
+    public ProfileResponse saveProfile(String userId) {
+        // create user
+        User user = new User();
+        user.setId(userId);
+
+        // create profile
+        Profile profile = new Profile("", LocalDate.now(), user);
+
+        return new ProfileResponse(profileRepository.save(profile));
     }
 
 }
