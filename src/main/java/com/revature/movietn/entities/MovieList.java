@@ -29,7 +29,7 @@ public class MovieList {
     @Id
     private String id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne

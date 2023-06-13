@@ -69,6 +69,9 @@ public class AuthController {
         // register user
         Principal principal = userService.register(req.getUsername(), req.getEmail(), req.getPassword());
 
+        // set up profile
+        userService.saveProfile(principal.getId());
+
         // set up default movie lists
         movieListService.saveDefaultMovieLists(principal.getId());
 
