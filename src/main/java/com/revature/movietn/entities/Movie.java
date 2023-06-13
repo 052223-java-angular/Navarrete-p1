@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -43,7 +43,8 @@ public class Movie {
     private Set<Review> reviews;
 
     @ManyToMany(mappedBy = "movies", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = "movies")
+    @JsonManagedReference
+    @JsonIgnore
     @EqualsAndHashCode.Exclude
     private Set<MovieList> movieLists;
 
