@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +39,7 @@ public class MovieList {
 
     @ManyToMany
     @JoinTable(name = "movie_list_items", joinColumns = @JoinColumn(name = "movie_list_id"), inverseJoinColumns = @JoinColumn(name = "movie_id"))
-    @JsonIgnoreProperties(value = "movieLists")
+    @JsonBackReference
     private Set<Movie> movies;
 
     public MovieList(String name, User user) {

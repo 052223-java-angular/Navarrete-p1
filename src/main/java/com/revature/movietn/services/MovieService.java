@@ -111,12 +111,18 @@ public class MovieService {
         Movie movie = foundMovie.get();
 
         // update total rating by removing previous rating and adding new rating
-        movie.setTotalRating(
-                movie.getTotalRating()
-                        .multiply(BigDecimal.valueOf(movie.getTotalVotes()))
-                        .subtract(rating)
-                        .divide(BigDecimal.valueOf(movie.getTotalVotes() - 1), 2, RoundingMode.CEILING));
-        movie.setTotalVotes(movie.getTotalVotes() - 1);
+        if (movie.getTotalVotes() - 1 == 0) {
+            movie.setTotalRating(new BigDecimal("0.00"));
+            movie.setTotalVotes(0);
+
+        } else {
+            movie.setTotalRating(
+                    movie.getTotalRating()
+                            .multiply(BigDecimal.valueOf(movie.getTotalVotes()))
+                            .subtract(rating)
+                            .divide(BigDecimal.valueOf(movie.getTotalVotes() - 1), 2, RoundingMode.CEILING));
+            movie.setTotalVotes(movie.getTotalVotes() - 1);
+        }
 
         return new MovieResponse(movieRepository.save(movie));
     }

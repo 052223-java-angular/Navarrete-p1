@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
@@ -38,13 +39,18 @@ public class MovieListService {
      * @return the MovieListResponse object
      */
     public MovieListResponse saveMovieList(NewMovieListRequest req) {
-        // transform name to lowercase
+        // transform name so first letters of every word in string are capitalized
         String name = req.getName().toLowerCase();
+        String[] words = name.split(" ");
+        for (int index = 0; index < words.length; index++) {
+            words[index] = StringUtils.capitalize(words[index]);
+        }
+        name = String.join(" ", words);
 
         // check if movie lists exists to avoid duplicates
-        Optional<MovieList> foundMovieList = movieListRepository.findByNameAndUserId(name,
+        Optional<MovieList> movieListOpt = movieListRepository.findByNameAndUserId(name,
                 req.getUserId());
-        if (foundMovieList.isPresent()) {
+        if (movieListOpt.isPresent()) {
             throw new ResourceConflictException("User already owns this movie list.");
         }
 
@@ -73,9 +79,9 @@ public class MovieListService {
 
         // create movie list set
         Set<MovieList> movieLists = new HashSet<>();
-        movieLists.add(new MovieList("plan to watch", user));
-        movieLists.add(new MovieList("watching", user));
-        movieLists.add(new MovieList("watched", user));
+        movieLists.add(new MovieList("Plan To Watch", user));
+        movieLists.add(new MovieList("Watching", user));
+        movieLists.add(new MovieList("Watched", user));
 
         // save all movie lists
         List<MovieList> savedMovieLists = movieListRepository.saveAll(movieLists);
@@ -99,11 +105,11 @@ public class MovieListService {
      */
     public MovieListResponse findById(String movieListId, String userId) {
         // get movie list
-        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
-        if (foundMovieList.isEmpty()) {
+        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
+        if (movieListOpt.isEmpty()) {
             throw new ResourceNotFoundException("Movie list was not found.");
         }
-        MovieList movieList = foundMovieList.get();
+        MovieList movieList = movieListOpt.get();
 
         // validate user owns movie list
         validateUserOwnsMovieList(movieList, userId);
@@ -143,11 +149,11 @@ public class MovieListService {
      */
     public MovieListResponse addMovieToMovieList(String movieListId, AddMovieToMovieListRequest req) {
         // get movie list
-        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
-        if (foundMovieList.isEmpty()) {
+        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
+        if (movieListOpt.isEmpty()) {
             throw new ResourceNotFoundException("Movie list not found.");
         }
-        MovieList movieList = foundMovieList.get();
+        MovieList movieList = movieListOpt.get();
 
         // get movie
         MovieResponse movieResponse = movieService.findById(req.getMovieId());
@@ -181,17 +187,17 @@ public class MovieListService {
      */
     public void deleteById(String movieListId, DeleteMovieListRequest req) {
         // get movie list
-        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
-        if (foundMovieList.isEmpty()) {
+        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
+        if (movieListOpt.isEmpty()) {
             throw new ResourceNotFoundException("Movie list not found.");
         }
-        MovieList movieList = foundMovieList.get();
+        MovieList movieList = movieListOpt.get();
 
         // validate user owns movie list
         validateUserOwnsMovieList(movieList, req.getUserId());
 
         // validate movie list name is not these 3: plan to watch, watching, and watched
-        String movieListName = movieList.getName();
+        String movieListName = movieList.getName().toLowerCase();
         if (movieListName.equals("plan to watch") ||
                 movieListName.equals("watching") ||
                 movieListName.equals("watched")) {
@@ -212,11 +218,11 @@ public class MovieListService {
      */
     public void deleteMovieFromMovieList(String movieListId, String movieId, DeleteMovieFromMovieListRequest req) {
         // get movie list
-        Optional<MovieList> foundMovieList = movieListRepository.findById(movieListId);
-        if (foundMovieList.isEmpty()) {
+        Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
+        if (movieListOpt.isEmpty()) {
             throw new ResourceNotFoundException("Movie list not found.");
         }
-        MovieList movieList = foundMovieList.get();
+        MovieList movieList = movieListOpt.get();
 
         // get movie
         MovieResponse movieResponse = movieService.findById(movieId);
