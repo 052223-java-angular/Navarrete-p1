@@ -1,9 +1,14 @@
 package com.revature.movietn.services;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.revature.movietn.dtos.requests.DeleteReviewRequest;
@@ -174,5 +179,49 @@ public class ReviewService {
         if (!review.getUser().getId().equals(userId) || !review.getMovie().getId().equals(movieId)) {
             throw new ResourceConflictException("Request has an invalid data combination.");
         }
+    }
+
+    /************************************************************************
+     * For Recommendation ** Doesn't return to controller **
+     ************************************************************************/
+    public Review findByUserIdAndMovieId(String userId, String movieId) {
+        Optional<Review> reviewOpt = reviewRepository.findByUserIdAndMovieId(userId, movieId);
+        if (reviewOpt.isEmpty()) {
+            throw new ResourceNotFoundException("No review found for this user and movie");
+        }
+        Review review = reviewOpt.get();
+
+        return review;
+    }
+
+    public List<Review> findAllByMovieIdSorted(String movieId) {
+        List<Review> reviews = reviewRepository.findAllByMovieId(movieId, Sort.by("rating").descending());
+        if (reviews.isEmpty()) {
+            throw new ResourceNotFoundException("No reviews for this movie");
+        }
+
+        return reviews;
+    }
+
+    public List<Review> findByMovieIdAndRatingBetweenAndUserIdNotSorted(String movieId, BigDecimal min,
+            BigDecimal max, String userId) {
+        List<Review> reviews = reviewRepository.findByMovieIdAndRatingBetweenAndUserIdNot(movieId,
+                min, max, userId, Sort.by("rating").descending());
+        if (reviews.isEmpty()) {
+            throw new ResourceNotFoundException("No reviews for this movie");
+        }
+
+        return reviews;
+    }
+
+    public List<Review> findAllByUserIdAndMovieIdNotSorted(String userId, String movieId, int amount) {
+        Page<Review> page = reviewRepository.findAllByUserIdAndMovieIdNot(userId, movieId,
+                PageRequest.of(0, amount, Sort.by("rating").descending()));
+        List<Review> reviews = page.getContent();
+        if (reviews.isEmpty()) {
+            throw new ResourceConflictException("No reviews for this user");
+        }
+
+        return reviews;
     }
 }

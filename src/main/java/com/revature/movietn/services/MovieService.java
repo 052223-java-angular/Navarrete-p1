@@ -2,8 +2,10 @@ package com.revature.movietn.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.revature.movietn.dtos.responses.MovieResponse;
@@ -125,5 +127,18 @@ public class MovieService {
         }
 
         return new MovieResponse(movieRepository.save(movie));
+    }
+
+    /****************************************************************
+     * For Recommendations ** Doesn't return to controller **
+     **************************************************************/
+    public List<Movie> findAllTopRatedMoviesSorted() {
+        List<Movie> movies = movieRepository.findAll(
+                Sort.by("totalRating").descending());
+        if (movies.isEmpty()) {
+            throw new ResourceNotFoundException("No movies reviews in db.");
+        }
+
+        return movies;
     }
 }
