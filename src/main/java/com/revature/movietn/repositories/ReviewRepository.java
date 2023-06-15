@@ -1,8 +1,13 @@
 package com.revature.movietn.repositories;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -35,4 +40,14 @@ public interface ReviewRepository extends JpaRepository<Review, String> {
      * @return a List of Review objects or an empty List
      */
     public Set<Review> findAllByUserId(String userId);
+
+    /******************************************************************
+     * Recommendation
+     *****************************************************************/
+    public List<Review> findAllByMovieId(String movieId, Sort sort);
+
+    List<Review> findByMovieIdAndRatingBetweenAndUserIdNot(String movieId, BigDecimal minRating,
+            BigDecimal maxRating, String userId, Sort sort);
+
+    public Page<Review> findAllByUserIdAndMovieIdNot(String userId, String movieId, Pageable pageable);
 }

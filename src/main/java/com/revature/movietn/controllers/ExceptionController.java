@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.revature.movietn.utils.custom_exceptions.UnauthorizedAccessException;
+
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path.Node;
+
 import com.revature.movietn.utils.custom_exceptions.BadRequestException;
 import com.revature.movietn.utils.custom_exceptions.ResourceConflictException;
 import com.revature.movietn.utils.custom_exceptions.ResourceNotFoundException;
@@ -81,6 +85,29 @@ public class ExceptionController {
             String fieldName = fe.getField();
             String errorMessage = fe.getDefaultMessage();
             resBody.put(fieldName, errorMessage);
+        });
+        resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+    /**
+     * This exception handler handles all exceptions relating to all invalid
+     * paramters. This includes path variables and request params.
+     * 
+     * @param e the ConstraintViolationException
+     * @return the ResponseEntity object with a status of 400 - BAD_REQUEST and
+     *         a body with the timestamp and error messages for each field.
+     */
+    @ExceptionHandler
+    public ResponseEntity<Map<String, Object>> constraintViolationException(
+            ConstraintViolationException e) {
+        Map<String, Object> resBody = new HashMap<>();
+        e.getConstraintViolations().forEach((cv) -> {
+            String field = null;
+            for (Node node : cv.getPropertyPath()) {
+                field = node.getName();
+            }
+            resBody.put(field, cv.getMessage());
         });
         resBody.put("timestamp", new Date(System.currentTimeMillis()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
