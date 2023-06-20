@@ -42,7 +42,7 @@ public class AuthController {
         // check if username is valid
         if (!userService.isValidUsername(req.getUsername())) {
             throw new ResourceConflictException(
-                    "Username needs to be 8-20 characters long and can only contain letters, numbers, periods, and underscores. No periods or underscores at the start or end. Cannot have pairs of underscores / periods.");
+                    "Username requires 8-20 characters, letters, numbers, and symbols [._]. No symbols at start or end and no pairs of symbols.");
         }
 
         // check if username is unique
@@ -52,13 +52,13 @@ public class AuthController {
 
         // check if email is valid
         if (!userService.isValidEmail(req.getEmail())) {
-            throw new ResourceConflictException("Email " + req.getEmail() + " invalid.");
+            throw new ResourceConflictException("Email " + req.getEmail() + "is invalid.");
         }
 
         // check if password is valid
         if (!userService.isValidPassword(req.getPassword())) {
             throw new ResourceConflictException(
-                    "Password must be at least 8 characters long and need to contain at least one number, undercase letter, and uppercase letter and one of the following symbols [@#$%^&+=]. Must not contain any whitespaces.");
+                    "Password requires min 8 characters, 1 number, 1 symbol [!@#$%^&+=], and no spaces.");
         }
 
         // check if passwords match
