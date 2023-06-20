@@ -8,10 +8,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
-import com.revature.movietn.dtos.requests.DeleteMovieFromMovieListRequest;
-import com.revature.movietn.dtos.requests.DeleteMovieListRequest;
-import com.revature.movietn.dtos.requests.NewMovieListRequest;
 import com.revature.movietn.dtos.responses.MovieListResponse;
 import com.revature.movietn.dtos.responses.MovieResponse;
 import com.revature.movietn.entities.Movie;
@@ -38,9 +34,9 @@ public class MovieListService {
      * @param req the NewMovieListRequest object with movie list information
      * @return the MovieListResponse object
      */
-    public MovieListResponse saveMovieList(NewMovieListRequest req) {
+    public MovieListResponse saveMovieList(String currName, String userId) {
         // transform name so first letters of every word in string are capitalized
-        String name = req.getName().toLowerCase();
+        String name = currName.toLowerCase();
         String[] words = name.split(" ");
         for (int index = 0; index < words.length; index++) {
             words[index] = StringUtils.capitalize(words[index]);
@@ -49,14 +45,14 @@ public class MovieListService {
 
         // check if movie lists exists to avoid duplicates
         Optional<MovieList> movieListOpt = movieListRepository.findByNameAndUserId(name,
-                req.getUserId());
+                userId);
         if (movieListOpt.isPresent()) {
             throw new ResourceConflictException("User already owns this movie list.");
         }
 
         // make user
         User user = new User();
-        user.setId(req.getUserId());
+        user.setId(userId);
 
         // make movie list
         MovieList movieList = new MovieList(name, user);
@@ -147,7 +143,7 @@ public class MovieListService {
      * @param req the AddMovieToMovieListRequest object
      * @return the MovieListResponse object
      */
-    public MovieListResponse addMovieToMovieList(String movieListId, AddMovieToMovieListRequest req) {
+    public MovieListResponse addMovieToMovieList(String movieListId, String movieId, String userId) {
         // get movie list
         Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
         if (movieListOpt.isEmpty()) {
@@ -156,11 +152,11 @@ public class MovieListService {
         MovieList movieList = movieListOpt.get();
 
         // get movie
-        MovieResponse movieResponse = movieService.findById(req.getMovieId());
+        MovieResponse movieResponse = movieService.findById(movieId);
         Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
 
         // validate user owns movie list
-        validateUserOwnsMovieList(movieList, req.getUserId());
+        validateUserOwnsMovieList(movieList, userId);
 
         // validate movie is in movie list
         if (movieList.getMovies().contains(movie)) {
@@ -185,7 +181,7 @@ public class MovieListService {
      * @param movieListId the movieListId
      * @param req         the DelteMovieListRequest object
      */
-    public void deleteById(String movieListId, DeleteMovieListRequest req) {
+    public void deleteById(String movieListId, String userId) {
         // get movie list
         Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
         if (movieListOpt.isEmpty()) {
@@ -194,7 +190,7 @@ public class MovieListService {
         MovieList movieList = movieListOpt.get();
 
         // validate user owns movie list
-        validateUserOwnsMovieList(movieList, req.getUserId());
+        validateUserOwnsMovieList(movieList, userId);
 
         // validate movie list name is not these 3: plan to watch, watching, and watched
         String movieListName = movieList.getName().toLowerCase();
@@ -216,7 +212,7 @@ public class MovieListService {
      * @param movieId     the movieId
      * @param req         the DeleteMovieFromMovieListRequest object
      */
-    public void deleteMovieFromMovieList(String movieListId, String movieId, DeleteMovieFromMovieListRequest req) {
+    public void deleteMovieFromMovieList(String movieListId, String movieId, String userId) {
         // get movie list
         Optional<MovieList> movieListOpt = movieListRepository.findById(movieListId);
         if (movieListOpt.isEmpty()) {
@@ -229,7 +225,7 @@ public class MovieListService {
         Movie movie = new Movie(movieResponse.getId(), movieResponse.getTotalRating(), movieResponse.getTotalVotes());
 
         // validate user owns movie list
-        validateUserOwnsMovieList(movieList, req.getUserId());
+        validateUserOwnsMovieList(movieList, userId);
 
         // validate movie is in movie list
         if (!movieList.getMovies().contains(movie)) {

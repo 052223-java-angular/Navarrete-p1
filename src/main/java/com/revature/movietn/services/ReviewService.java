@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.revature.movietn.dtos.requests.DeleteReviewRequest;
 import com.revature.movietn.dtos.requests.ModifyReviewRequest;
 import com.revature.movietn.dtos.requests.NewReviewRequest;
 import com.revature.movietn.dtos.responses.ReviewResponse;
@@ -36,13 +35,13 @@ public class ReviewService {
      * @param req the NewReviewRequest object containing review information
      * @return the ReviewResponse object
      */
-    public ReviewResponse saveReview(NewReviewRequest req) {
+    public ReviewResponse saveReview(NewReviewRequest req, String userId) {
         // update movie
         movieService.updateMovieWithNewReview(req.getMovieId(), req.getRating());
 
         // make user and movie
         User user = new User();
-        user.setId(req.getUserId());
+        user.setId(userId);
         Movie movie = new Movie();
         movie.setId(req.getMovieId());
         Review review = new Review(req.getRating(), req.getDescription(), user, movie);
@@ -144,7 +143,7 @@ public class ReviewService {
      * @param reviewId the review id
      * @param req      the DeleteReviewRequest object
      */
-    public void deleteReview(String reviewId, DeleteReviewRequest req) {
+    public void deleteReview(String reviewId, String movieId) {
         // get review from db
         Optional<Review> foundReview = reviewRepository.findById(reviewId);
         if (foundReview.isEmpty()) {
@@ -153,7 +152,7 @@ public class ReviewService {
         Review review = foundReview.get();
 
         // update movie
-        movieService.updateMovieWithDeletedReview(req.getMovieId(), review.getRating());
+        movieService.updateMovieWithDeletedReview(movieId, review.getRating());
 
         // delete review from db
         reviewRepository.deleteById(reviewId);

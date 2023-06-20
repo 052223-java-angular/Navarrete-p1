@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -109,6 +110,15 @@ public class ExceptionController {
             }
             resBody.put(field, cv.getMessage());
         });
+        resBody.put("timestamp", new Date(System.currentTimeMillis()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, Object>> missingRequestHeaderExceptionHandler(
+            MissingRequestHeaderException e) {
+        Map<String, Object> resBody = new HashMap<>();
+        resBody.put(e.getHeaderName(), e.getMessage());
         resBody.put("timestamp", new Date(System.currentTimeMillis()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resBody);
     }

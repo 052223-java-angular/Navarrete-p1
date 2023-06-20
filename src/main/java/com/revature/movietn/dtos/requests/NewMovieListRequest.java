@@ -15,7 +15,4 @@ public class NewMovieListRequest {
     @NotBlank(message = "Name should not be blank.")
     @Pattern(regexp = "^\\S+(?: \\S+)*$", message = "The name is invalid.")
     private String name;
-
-    @NotBlank(message = "UserId should not be blank.")
-    private String userId;
 }

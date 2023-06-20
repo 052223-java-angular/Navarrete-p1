@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.revature.movietn.dtos.requests.GetMovieRecommendations;
 import com.revature.movietn.dtos.responses.MovieResponse;
 import com.revature.movietn.entities.Movie;
 import com.revature.movietn.entities.Review;
@@ -25,12 +24,12 @@ public class RecommendationService {
     private final MovieService movieService;
     private final ReviewService reviewService;
 
-    public Set<MovieResponse> getMovieRecommendations(String movieId, int amount, GetMovieRecommendations req) {
+    public Set<MovieResponse> getMovieRecommendations(String movieId, int amount, String currUserId) {
         Review userReview;
         List<Review> reviews;
         try {
             // get user review for movie
-            userReview = reviewService.findByUserIdAndMovieId(req.getUserId(), movieId);
+            userReview = reviewService.findByUserIdAndMovieId(currUserId, movieId);
 
             // calculate min and max rating range
             BigDecimal min = userReview.getRating().subtract(BigDecimal.valueOf(1.5));
@@ -44,7 +43,7 @@ public class RecommendationService {
                  * user's review
                  */
                 reviews = reviewService.findByMovieIdAndRatingBetweenAndUserIdNotSorted(movieId,
-                        min, max, req.getUserId());
+                        min, max, currUserId);
             } catch (ResourceNotFoundException e) {
                 // reviews in range not found
                 reviews = new ArrayList<>();
@@ -77,7 +76,7 @@ public class RecommendationService {
                 }
 
                 // do not give user a movie that they have reviewed
-                if (reviewService.userHasLeftReview(req.getUserId(), movie.getId())) {
+                if (reviewService.userHasLeftReview(currUserId, movie.getId())) {
                     continue;
                 }
 
@@ -100,7 +99,7 @@ public class RecommendationService {
                     for (Review subReview : subReviews) {
                         Movie subMovie = subReview.getMovie();
                         // do not give user a movie that they have reviewed
-                        if (reviewService.userHasLeftReview(req.getUserId(), subMovie.getId())) {
+                        if (reviewService.userHasLeftReview(currUserId, subMovie.getId())) {
                             continue;
                         }
 
@@ -134,7 +133,7 @@ public class RecommendationService {
                     }
 
                     // do not give user a movie that they have reviewed
-                    if (reviewService.userHasLeftReview(req.getUserId(), movie.getId())) {
+                    if (reviewService.userHasLeftReview(currUserId, movie.getId())) {
                         continue;
                     }
 

@@ -11,9 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AddMovieToMovieListRequest {
-    @NotBlank(message = "UserId should not be blank.")
-    private String userId;
-
     @NotBlank(message = "MovieId should not be blank.")
     private String movieId;
 }
