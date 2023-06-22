@@ -2,8 +2,10 @@ package com.revature.movietn.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,21 @@ public class MovieService {
         }
 
         return new MovieResponse(movie);
+    }
+
+    public Set<MovieResponse> findAll(List<String> ids) {
+        List<Movie> movies = movieRepository.findAllById(ids);
+        if (movies.isEmpty()) {
+            throw new ResourceNotFoundException("No movies found.");
+        }
+
+        // transform data
+        Set<MovieResponse> movieResponses = new HashSet<>();
+        for (Movie movie : movies) {
+            movieResponses.add(new MovieResponse(movie));
+        }
+
+        return movieResponses;
     }
 
     /**

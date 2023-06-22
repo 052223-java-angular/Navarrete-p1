@@ -24,8 +24,6 @@ public class NewReviewRequest {
     private BigDecimal rating;
     @NotBlank(message = "Description should not be empty.")
     private String description;
-    @NotBlank(message = "Username should not be empty.")
-    private String userId;
     @NotBlank(message = "MovieId should not be empty.")
     private String movieId;
 }

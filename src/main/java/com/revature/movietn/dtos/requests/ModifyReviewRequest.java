@@ -24,8 +24,6 @@ public class ModifyReviewRequest {
     private BigDecimal rating;
     @NotBlank(message = "Description should not be empty.")
     private String description;
-    @NotBlank(message = "UserId should not be empty.")
-    private String userId;
     @NotBlank(message = "Message should not be empty.")
     private String movieId;
 }

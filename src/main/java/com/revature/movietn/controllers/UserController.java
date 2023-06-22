@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +17,6 @@ import com.revature.movietn.dtos.responses.ProfileResponse;
 import com.revature.movietn.services.JwtTokenService;
 import com.revature.movietn.services.UserService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -39,9 +39,7 @@ public class UserController {
      */
     @GetMapping("/{userId}/profile")
     public ResponseEntity<ProfileResponse> getUserProfile(@PathVariable("userId") String userId,
-            HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @RequestHeader(value = "auth_token", required = true) String token) {
 
         // get Principal object with user info
         Principal principal = userService.findById(userId);
@@ -69,9 +67,7 @@ public class UserController {
     @PutMapping("/{userId}/profile/avatar")
     public ResponseEntity<ProfileResponse> updateProfileAvatar(@Valid @RequestBody ModifyProfileAvatarRequest req,
             @PathVariable("userId") String userId,
-            HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @RequestHeader(value = "auth_token", required = true) String token) {
 
         // get Principal object with user info
         Principal principal = userService.findById(userId);

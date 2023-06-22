@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.movietn.dtos.requests.AddMovieToMovieListRequest;
-import com.revature.movietn.dtos.requests.DeleteMovieFromMovieListRequest;
-import com.revature.movietn.dtos.requests.DeleteMovieListRequest;
-import com.revature.movietn.dtos.requests.GetMovieListRequest;
 import com.revature.movietn.dtos.requests.NewMovieListRequest;
 import com.revature.movietn.dtos.responses.MovieListResponse;
 import com.revature.movietn.dtos.responses.Principal;
@@ -26,7 +24,6 @@ import com.revature.movietn.services.JwtTokenService;
 import com.revature.movietn.services.MovieListService;
 import com.revature.movietn.services.UserService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -53,9 +50,7 @@ public class MovieListController {
      */
     @GetMapping(params = "userId")
     public ResponseEntity<Set<MovieListResponse>> getAllMovieListsForUser(@RequestParam String userId,
-            HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @RequestHeader(value = "auth_token", required = true) String token) {
 
         // get Principal object with user info
         Principal principal = userService.findById(userId);
@@ -83,19 +78,18 @@ public class MovieListController {
      */
     @GetMapping("/{movieListId}/movies")
     public ResponseEntity<MovieListResponse> getMovieList(
-            @Valid @RequestBody GetMovieListRequest req,
-            @PathVariable("movieListId") @NotBlank String movieListId, HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @PathVariable("movieListId") @NotBlank String movieListId,
+            @RequestHeader(value = "auth_token", required = true) String token,
+            @RequestHeader(value = "userId", required = true) String userId) {
 
         // get Principal object with user info
-        Principal principal = userService.findById(req.getUserId());
+        Principal principal = userService.findById(userId);
 
         // validate token
         jwtTokenService.validateToken(token, principal);
 
         // get movies list with movies
-        MovieListResponse movieListResponse = movieListService.findById(movieListId, req.getUserId());
+        MovieListResponse movieListResponse = movieListService.findById(movieListId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
     }
@@ -113,18 +107,17 @@ public class MovieListController {
      */
     @PostMapping
     public ResponseEntity<MovieListResponse> createMovieList(@Valid @RequestBody NewMovieListRequest req,
-            HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @RequestHeader(value = "auth_token", required = true) String token,
+            @RequestHeader(value = "userId", required = true) String userId) {
 
         // get Principal object with user info
-        Principal principal = userService.findById(req.getUserId());
+        Principal principal = userService.findById(userId);
 
         // validate token
         jwtTokenService.validateToken(token, principal);
 
         // save movie list
-        MovieListResponse movieListResponse = movieListService.saveMovieList(req);
+        MovieListResponse movieListResponse = movieListService.saveMovieList(req.getName(), userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
     }
@@ -147,18 +140,19 @@ public class MovieListController {
      */
     @PostMapping("/{movieListId}/movies")
     public ResponseEntity<MovieListResponse> addMovieToMovieList(@Valid @RequestBody AddMovieToMovieListRequest req,
-            @PathVariable("movieListId") @NotBlank String movieListId, HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @PathVariable("movieListId") @NotBlank String movieListId,
+            @RequestHeader(value = "auth_token", required = true) String token,
+            @RequestHeader(value = "userId", required = true) String userId) {
 
         // get Principal object with user info
-        Principal principal = userService.findById(req.getUserId());
+        Principal principal = userService.findById(userId);
 
         // validate token
         jwtTokenService.validateToken(token, principal);
 
         // add movie to movie list
-        MovieListResponse movieListResponse = movieListService.addMovieToMovieList(movieListId, req);
+        MovieListResponse movieListResponse = movieListService.addMovieToMovieList(movieListId, req.getMovieId(),
+                userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(movieListResponse);
     }
@@ -176,19 +170,19 @@ public class MovieListController {
      *         body containing the MovieListResponse object
      */
     @DeleteMapping("/{movieListId}")
-    public ResponseEntity<?> deleteMovieList(@Valid @RequestBody DeleteMovieListRequest req,
-            @PathVariable("movieListId") @NotBlank String movieListId, HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+    public ResponseEntity<?> deleteMovieList(
+            @PathVariable("movieListId") @NotBlank String movieListId,
+            @RequestHeader(value = "auth_token", required = true) String token,
+            @RequestHeader(value = "userId", required = true) String userId) {
 
         // get Principal object with user info
-        Principal principal = userService.findById(req.getUserId());
+        Principal principal = userService.findById(userId);
 
         // validate token
         jwtTokenService.validateToken(token, principal);
 
         // delete movie list
-        movieListService.deleteById(movieListId, req);
+        movieListService.deleteById(movieListId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -207,20 +201,20 @@ public class MovieListController {
      *         body containing the MovieListResponse object
      */
     @DeleteMapping("/{movieListId}/movies/{movieId}")
-    public ResponseEntity<?> deleteMovieFromMovieList(@Valid @RequestBody DeleteMovieFromMovieListRequest req,
+    public ResponseEntity<?> deleteMovieFromMovieList(
             @PathVariable("movieListId") @NotBlank String movieListId,
-            @PathVariable("movieId") @NotBlank String movieId, HttpServletRequest sreq) {
-        // get token
-        String token = sreq.getHeader("auth_token");
+            @PathVariable("movieId") @NotBlank String movieId,
+            @RequestHeader(value = "auth_token", required = true) String token,
+            @RequestHeader(value = "userId", required = true) String userId) {
 
         // get Principal object with user info
-        Principal principal = userService.findById(req.getUserId());
+        Principal principal = userService.findById(userId);
 
         // validate token
         jwtTokenService.validateToken(token, principal);
 
         // delete movie from movie list
-        movieListService.deleteMovieFromMovieList(movieListId, movieId, req);
+        movieListService.deleteMovieFromMovieList(movieListId, movieId, userId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
